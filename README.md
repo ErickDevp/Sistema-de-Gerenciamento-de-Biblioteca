@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 📚 BibliotecaMVC — Sistema de Gerenciamento de Biblioteca
 
 Sistema web desenvolvido em **C# ASP.NET MVC (.NET 8)** para gerenciamento interno de biblioteca, com controle de acervo, usuários, categorias e empréstimos.
@@ -281,3 +282,6 @@ Livro     (1) ──── (N) Emprestimo
 ---
 
 *BibliotecaMVC — Projeto acadêmico de Sistema de Gerenciamento de Biblioteca em ASP.NET MVC*
+=======
+# Sistema-de-Gerenciamento-de-Biblioteca
+>>>>>>> 76382413345f3e3cd9e96b9887cfc89865790af7
