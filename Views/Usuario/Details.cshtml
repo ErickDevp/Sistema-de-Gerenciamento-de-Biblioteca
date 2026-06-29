@@ -1,0 +1,54 @@
+@model Usuario
+@{
+    ViewData["Title"] = "Detalhes do Usuário";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Usuario">Usuários</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Detalhes</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>👁️ Detalhes do Usuário</h1>
+    </div>
+    <div class="btn-group">
+        <a href="/Usuario/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
+        <a href="/Usuario" class="btn btn-secondary">← Voltar</a>
+    </div>
+</div>
+
+<div class="card" style="max-width:600px">
+    <div class="card-header">
+        👤 @Model.Nome
+        @if (Model.Role == "Administrador")
+        {
+            <span class="badge badge-primary" style="margin-left:auto">👑 Administrador</span>
+        }
+        else
+        {
+            <span class="badge badge-secondary" style="margin-left:auto">👤 Funcionário</span>
+        }
+    </div>
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Nome Completo</label>
+                <p>@Model.Nome</p>
+            </div>
+            <div class="detail-item">
+                <label>E-mail</label>
+                <p>@Model.Email</p>
+            </div>
+            <div class="detail-item">
+                <label>Cargo (Role)</label>
+                <p>@Model.Role</p>
+            </div>
+            <div class="detail-item">
+                <label>ID do Usuário</label>
+                <p>#@Model.Id</p>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+@model Livro
+@{
+    ViewData["Title"] = "Editar Livro";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Livro">Livros</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Editar</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>✏️ Editar Livro</h1>
+        <p>Atualize as informações do livro</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:680px">
+    <div class="card-header">📖 @Model.Titulo</div>
+    <div class="card-body">
+        <form method="post" asp-action="Edit" asp-controller="Livro" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Titulo" class="form-label">Título <span class="required">*</span></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Autor" class="form-label">Autor <span class="required">*</span></label>
+                <input asp-for="Autor" class="form-control" />
+                <span asp-validation-for="Autor" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="AnoPublicacao" class="form-label">Ano de Publicação <span class="required">*</span></label>
+                    <input asp-for="AnoPublicacao" class="form-control" type="number" />
+                    <span asp-validation-for="AnoPublicacao" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CategoriaId" class="form-label">Categoria <span class="required">*</span></label>
+                    <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.Categorias">
+                        <option value="">Selecione...</option>
+                    </select>
+                    <span asp-validation-for="CategoriaId" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Disponivel" class="form-label">Disponibilidade</label>
+                <select asp-for="Disponivel" class="form-control">
+                    <option value="true">Disponível</option>
+                    <option value="false">Indisponível</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
+                <a href="/Livro" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

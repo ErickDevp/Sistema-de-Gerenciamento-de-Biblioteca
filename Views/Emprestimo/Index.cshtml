@@ -1,0 +1,93 @@
+@model IEnumerable<Emprestimo>
+@{
+    ViewData["Title"] = "Empréstimos";
+    var hoje = DateTime.Now.Date;
+}
+
+<div class="page-header">
+    <div>
+        <h1>📋 Empréstimos</h1>
+        <p>Controle de empréstimos e devoluções</p>
+    </div>
+    <a href="/Emprestimo/Create" class="btn btn-primary">➕ Novo Empréstimo</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        📋 Lista de Empréstimos
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">@Model.Count() registro(s)</span>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>Nenhum empréstimo registrado</h3>
+                <p>Clique em "Novo Empréstimo" para registrar o primeiro.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Livro</th>
+                            <th>Leitor</th>
+                            <th>Empréstimo</th>
+                            <th>Previsão Dev.</th>
+                            <th>Devolvido em</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var emp in Model)
+                        {
+                            <tr>
+                                <td style="color:#9ca3af">@emp.Id</td>
+                                <td><strong>@emp.Livro?.Titulo</strong></td>
+                                <td>@emp.NomeLeitor</td>
+                                <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
+                                    @if (emp.Status != "Devolvido" && emp.DataPrevistaDevolucao.Date < hoje)
+                                    {
+                                        <span style="color:#dc3545; font-size:0.75rem; display:block">
+                                            @((hoje - emp.DataPrevistaDevolucao.Date).Days) dia(s) de atraso
+                                        </span>
+                                    }
+                                </td>
+                                <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                <td>
+                                    @if (emp.Status == "Devolvido")
+                                    {
+                                        <span class="badge badge-success">Devolvido</span>
+                                    }
+                                    else if (emp.Status == "Atrasado")
+                                    {
+                                        <span class="badge badge-danger">⚠ Atrasado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-primary">Ativo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Emprestimo/Details/@emp.Id" class="btn btn-sm btn-outline">👁</a>
+                                        @if (emp.Status != "Devolvido")
+                                        {
+                                            <a href="/Emprestimo/Devolver/@emp.Id" class="btn btn-sm btn-success">↩ Devolver</a>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

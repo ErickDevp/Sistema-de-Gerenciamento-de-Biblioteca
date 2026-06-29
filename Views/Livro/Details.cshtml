@@ -1,0 +1,98 @@
+@model Livro
+@{
+    ViewData["Title"] = "Detalhes do Livro";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Livro">Livros</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Detalhes</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>👁️ Detalhes do Livro</h1>
+    </div>
+    <div class="btn-group">
+        <a href="/Livro/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
+        <a href="/Livro" class="btn btn-secondary">← Voltar</a>
+    </div>
+</div>
+
+<div class="card" style="max-width:700px">
+    <div class="card-header">
+        📖 @Model.Titulo
+        @if (Model.Disponivel)
+        {
+            <span class="badge badge-success" style="margin-left:auto">✓ Disponível</span>
+        }
+        else
+        {
+            <span class="badge badge-danger" style="margin-left:auto">✗ Emprestado</span>
+        }
+    </div>
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Título</label>
+                <p>@Model.Titulo</p>
+            </div>
+            <div class="detail-item">
+                <label>Autor</label>
+                <p>@Model.Autor</p>
+            </div>
+            <div class="detail-item">
+                <label>Ano de Publicação</label>
+                <p>@Model.AnoPublicacao</p>
+            </div>
+            <div class="detail-item">
+                <label>Categoria</label>
+                <p>@Model.Categoria?.Nome</p>
+            </div>
+        </div>
+
+        @if (Model.Emprestimos?.Any() ?? false)
+        {
+            <hr style="margin:20px 0; border-color:#dee2e6" />
+            <h4 style="font-size:0.95rem; margin-bottom:12px; color:#1a3a5c">Histórico de Empréstimos</h4>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Leitor</th>
+                            <th>Empréstimo</th>
+                            <th>Previsão</th>
+                            <th>Devolvido em</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var emp in Model.Emprestimos.OrderByDescending(e => e.DataEmprestimo))
+                        {
+                            <tr>
+                                <td>@emp.NomeLeitor</td>
+                                <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                                <td>@emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
+                                <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                <td>
+                                    @if (emp.Status == "Devolvido")
+                                    {
+                                        <span class="badge badge-success">Devolvido</span>
+                                    }
+                                    else if (emp.Status == "Atrasado")
+                                    {
+                                        <span class="badge badge-danger">Atrasado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-primary">Ativo</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,78 @@
+@model IEnumerable<Usuario>
+@{
+    ViewData["Title"] = "Usuários";
+}
+
+<div class="page-header">
+    <div>
+        <h1>👥 Usuários</h1>
+        <p>Gerencie os usuários do sistema</p>
+    </div>
+    <a href="/Usuario/Create" class="btn btn-primary">➕ Novo Usuário</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        👥 Lista de Usuários
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">@Model.Count() usuário(s)</span>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">👥</div>
+                <h3>Nenhum usuário cadastrado</h3>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Cargo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var u in Model)
+                        {
+                            <tr>
+                                <td style="color:#9ca3af">@u.Id</td>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:10px">
+                                        <div style="width:32px; height:32px; border-radius:50%; background:#1a3a5c; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; flex-shrink:0">
+                                            @u.Nome.Substring(0, 1).ToUpper()
+                                        </div>
+                                        <strong>@u.Nome</strong>
+                                    </div>
+                                </td>
+                                <td>@u.Email</td>
+                                <td>
+                                    @if (u.Role == "Administrador")
+                                    {
+                                        <span class="badge badge-primary">👑 Administrador</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-secondary">👤 Funcionário</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Usuario/Details/@u.Id" class="btn btn-sm btn-outline">👁</a>
+                                        <a href="/Usuario/Edit/@u.Id" class="btn btn-sm btn-warning">✏️</a>
+                                        <a href="/Usuario/Delete/@u.Id" class="btn btn-sm btn-danger">🗑</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

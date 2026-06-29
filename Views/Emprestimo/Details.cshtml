@@ -1,0 +1,84 @@
+@model Emprestimo
+@{
+    ViewData["Title"] = "Detalhes do Empréstimo";
+    var hoje = DateTime.Now.Date;
+    var atrasado = Model.Status != "Devolvido" && Model.DataPrevistaDevolucao.Date < hoje;
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Emprestimo">Empréstimos</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Detalhes</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>👁️ Detalhes do Empréstimo</h1>
+    </div>
+    <div class="btn-group">
+        @if (Model.Status != "Devolvido")
+        {
+            <a href="/Emprestimo/Devolver/@Model.Id" class="btn btn-success">↩ Registrar Devolução</a>
+        }
+        <a href="/Emprestimo" class="btn btn-secondary">← Voltar</a>
+    </div>
+</div>
+
+<div class="card" style="max-width:700px">
+    <div class="card-header">
+        📋 Empréstimo #@Model.Id
+        @if (Model.Status == "Devolvido")
+        {
+            <span class="badge badge-success" style="margin-left:auto">Devolvido</span>
+        }
+        else if (atrasado)
+        {
+            <span class="badge badge-danger" style="margin-left:auto">⚠ Atrasado</span>
+        }
+        else
+        {
+            <span class="badge badge-primary" style="margin-left:auto">Ativo</span>
+        }
+    </div>
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label>Livro</label>
+                <p><a href="/Livro/Details/@Model.LivroId" style="color:#2563a8">@Model.Livro?.Titulo</a></p>
+            </div>
+            <div class="detail-item">
+                <label>Autor</label>
+                <p>@Model.Livro?.Autor</p>
+            </div>
+            <div class="detail-item">
+                <label>Categoria</label>
+                <p>@Model.Livro?.Categoria?.Nome</p>
+            </div>
+            <div class="detail-item">
+                <label>Leitor</label>
+                <p>@Model.NomeLeitor</p>
+            </div>
+            <div class="detail-item">
+                <label>Data do Empréstimo</label>
+                <p>@Model.DataEmprestimo.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+            <div class="detail-item">
+                <label>Previsão de Devolução</label>
+                <p style="color:@(atrasado ? "#dc3545" : "inherit")">
+                    @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
+                    @if (atrasado)
+                    {
+                        <text> — @((hoje - Model.DataPrevistaDevolucao.Date).Days) dia(s) de atraso</text>
+                    }
+                </p>
+            </div>
+            @if (Model.DataDevolucao.HasValue)
+            {
+                <div class="detail-item">
+                    <label>Data de Devolução</label>
+                    <p>@Model.DataDevolucao.Value.ToString("dd/MM/yyyy HH:mm")</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>

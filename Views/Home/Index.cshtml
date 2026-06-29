@@ -1,0 +1,130 @@
+@model IEnumerable<Emprestimo>
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="page-header">
+    <div>
+        <h1>📊 Dashboard</h1>
+        <p>Visão geral do sistema de biblioteca</p>
+    </div>
+    <a href="/Emprestimo/Create" class="btn btn-primary">➕ Novo Empréstimo</a>
+</div>
+
+<!-- ESTATÍSTICAS -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">📚</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.TotalLivros</div>
+            <div class="stat-label">Total de Livros</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.LivrosDisponiveis</div>
+            <div class="stat-label">Disponíveis</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon orange">📤</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.LivrosEmprestados</div>
+            <div class="stat-label">Emprestados</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon red">⚠️</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.EmprestimosAtrasados</div>
+            <div class="stat-label">Atrasados</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">🏷️</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.TotalCategorias</div>
+            <div class="stat-label">Categorias</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon teal">👥</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.TotalUsuarios</div>
+            <div class="stat-label">Usuários</div>
+        </div>
+    </div>
+</div>
+
+<!-- ALERTAS -->
+@if ((int)ViewBag.EmprestimosAtrasados > 0)
+{
+    <div class="alert alert-warning">
+        ⚠️ Existem <strong>@ViewBag.EmprestimosAtrasados empréstimo(s) atrasado(s)</strong>.
+        <a href="/Emprestimo" style="margin-left:8px; color:inherit; font-weight:600;">Ver todos →</a>
+    </div>
+}
+
+<!-- EMPRÉSTIMOS RECENTES -->
+<div class="card">
+    <div class="card-header">
+        📋 Últimos Empréstimos
+        <a href="/Emprestimo" class="btn btn-sm btn-outline" style="margin-left:auto;">Ver todos</a>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>Nenhum empréstimo registrado</h3>
+                <p>Registre o primeiro empréstimo clicando em "Novo Empréstimo"</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Livro</th>
+                            <th>Leitor</th>
+                            <th>Empréstimo</th>
+                            <th>Devolução Prevista</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var e in Model)
+                        {
+                            <tr>
+                                <td><strong>@e.Livro?.Titulo</strong></td>
+                                <td>@e.NomeLeitor</td>
+                                <td>@e.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                                <td>@e.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (e.Status == "Devolvido")
+                                    {
+                                        <span class="badge badge-success">Devolvido</span>
+                                    }
+                                    else if (e.Status == "Atrasado" || e.EstaAtrasado)
+                                    {
+                                        <span class="badge badge-danger">Atrasado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-primary">Ativo</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a href="/Emprestimo/Details/@e.Id" class="btn btn-sm btn-outline">Detalhes</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

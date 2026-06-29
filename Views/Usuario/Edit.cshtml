@@ -1,0 +1,67 @@
+@model Usuario
+@{
+    ViewData["Title"] = "Editar Usuário";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Usuario">Usuários</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Editar</li>
+</ul>
+
+<div class="page-header">
+    <h1>✏️ Editar Usuário</h1>
+</div>
+
+<div class="card" style="max-width:600px">
+    <div class="card-header">👤 @Model.Nome</div>
+    <div class="card-body">
+        <form method="post" asp-action="Edit" asp-controller="Usuario" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="SenhaHash" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Nome" class="form-label">Nome <span class="required">*</span></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email" class="form-label">E-mail <span class="required">*</span></label>
+                <input asp-for="Email" class="form-control" type="email" />
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Nova Senha</label>
+                    <input name="NovaSenha" class="form-control" type="password" placeholder="Deixe em branco para manter" />
+                    <span class="field-validation-error">@ViewData.ModelState["NovaSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Confirmar Nova Senha</label>
+                    <input name="ConfirmarSenha" class="form-control" type="password" placeholder="Repita a nova senha" />
+                    <span class="field-validation-error">@ViewData.ModelState["ConfirmarSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Role" class="form-label">Cargo <span class="required">*</span></label>
+                <select asp-for="Role" class="form-control">
+                    <option value="Funcionario">👤 Funcionário</option>
+                    <option value="Administrador">👑 Administrador</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
+                <a href="/Usuario" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

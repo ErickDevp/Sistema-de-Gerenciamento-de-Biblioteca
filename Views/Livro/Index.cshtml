@@ -1,0 +1,106 @@
+@model LivroViewModel
+@{
+    ViewData["Title"] = "Livros";
+}
+
+<div class="page-header">
+    <div>
+        <h1>📖 Livros</h1>
+        <p>Gerencie o acervo da biblioteca</p>
+    </div>
+    <a href="/Livro/Create" class="btn btn-primary">➕ Novo Livro</a>
+</div>
+
+<!-- BUSCA -->
+<form method="get" action="/Livro" class="search-bar">
+    <div class="form-group">
+        <label class="form-label">Buscar por Título / Autor</label>
+        <input type="text" name="busca" value="@Model.FiltroBusca" class="form-control" placeholder="Digite para buscar..." />
+    </div>
+    <div class="form-group">
+        <label class="form-label">Filtrar por Categoria</label>
+        <select name="categoriaId" class="form-control">
+            <option value="">Todas as categorias</option>
+            @foreach (var cat in Model.Categorias ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>())
+            {
+                <option value="@cat.Value" selected="@(cat.Value == Model.FiltroCategoria?.ToString() ? "selected" : null)">
+                    @cat.Text
+                </option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">&nbsp;</label>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+            <a href="/Livro" class="btn btn-secondary">✕ Limpar</a>
+        </div>
+    </div>
+</form>
+
+<!-- TABELA -->
+<div class="card">
+    <div class="card-header">
+        📚 Acervo
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">
+            @(Model.Livros?.Count() ?? 0) livro(s) encontrado(s)
+        </span>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!(Model.Livros?.Any() ?? false))
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📖</div>
+                <h3>Nenhum livro encontrado</h3>
+                <p>Cadastre o primeiro livro ou ajuste os filtros de busca.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Título</th>
+                            <th>Autor</th>
+                            <th>Ano</th>
+                            <th>Categoria</th>
+                            <th>Disponibilidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var livro in Model.Livros!)
+                        {
+                            <tr>
+                                <td style="color:#9ca3af">@livro.Id</td>
+                                <td><strong>@livro.Titulo</strong></td>
+                                <td>@livro.Autor</td>
+                                <td>@livro.AnoPublicacao</td>
+                                <td><span class="badge badge-secondary">@livro.Categoria?.Nome</span></td>
+                                <td>
+                                    @if (livro.Disponivel)
+                                    {
+                                        <span class="badge badge-success">✓ Disponível</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-danger">✗ Emprestado</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Livro/Details/@livro.Id" class="btn btn-sm btn-outline">👁</a>
+                                        <a href="/Livro/Edit/@livro.Id" class="btn btn-sm btn-warning">✏️</a>
+                                        <a href="/Livro/Delete/@livro.Id" class="btn btn-sm btn-danger">🗑</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

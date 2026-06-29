@@ -1,0 +1,50 @@
+@model Livro
+@{
+    ViewData["Title"] = "Excluir Livro";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Livro">Livros</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Excluir</li>
+</ul>
+
+<div class="page-header">
+    <h1>🗑️ Excluir Livro</h1>
+</div>
+
+<div class="card" style="max-width:600px">
+    <div class="card-header">⚠️ Confirmar Exclusão</div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            ⚠️ Tem certeza que deseja excluir o livro abaixo? Esta ação não pode ser desfeita.
+        </div>
+
+        <div class="detail-grid" style="margin-bottom:20px">
+            <div class="detail-item">
+                <label>Título</label>
+                <p>@Model.Titulo</p>
+            </div>
+            <div class="detail-item">
+                <label>Autor</label>
+                <p>@Model.Autor</p>
+            </div>
+            <div class="detail-item">
+                <label>Ano</label>
+                <p>@Model.AnoPublicacao</p>
+            </div>
+            <div class="detail-item">
+                <label>Categoria</label>
+                <p>@Model.Categoria?.Nome</p>
+            </div>
+        </div>
+
+        <form method="post" asp-action="Delete" asp-controller="Livro" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
+                <a href="/Livro" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

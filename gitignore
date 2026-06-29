@@ -1,0 +1,122 @@
+# ============================================
+# .gitignore — BibliotecaMVC (ASP.NET Core)
+# ============================================
+
+# ----------------------
+# Visual Studio
+# ----------------------
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# ----------------------
+# Build / Output
+# ----------------------
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+out/
+build/
+artifacts/
+
+# ----------------------
+# NuGet
+# ----------------------
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ----------------------
+# Publicação / Deploy
+# ----------------------
+**/publish/
+**/PublishProfiles/
+*.pubxml
+*.pubxml.user
+*.publishsettings
+
+# ----------------------
+# Entity Framework
+# ----------------------
+# Mantenha a pasta Migrations no Git
+# mas ignore arquivos temporários
+*.efbundle
+
+# ----------------------
+# Configurações sensíveis
+# ----------------------
+appsettings.Development.json
+appsettings.Production.json
+secrets.json
+*.pfx
+*.p12
+*.key
+
+# ----------------------
+# Logs
+# ----------------------
+*.log
+logs/
+LogFiles/
+
+# ----------------------
+# Sistema Operacional
+# ----------------------
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+
+# ----------------------
+# IDEs e Editores
+# ----------------------
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+
+# ----------------------
+# Node / Frontend (se usar)
+# ----------------------
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# ----------------------
+# Variáveis de ambiente
+# ----------------------
+.env
+.env.local
+.env.*.local
+
+# ----------------------
+# Temporários
+# ----------------------
+*.tmp
+*.temp
+*.bak
+*.swp
+*.cache
