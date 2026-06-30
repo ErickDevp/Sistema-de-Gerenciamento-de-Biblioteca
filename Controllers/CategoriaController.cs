@@ -1,9 +1,9 @@
-using BibliotecaMVC.Data;
-using BibliotecaMVC.Models;
+using Biblioteca.Data;
+using Biblioteca.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class CategoriaController : BaseController
     {

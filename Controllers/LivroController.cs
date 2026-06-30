@@ -1,11 +1,11 @@
-using BibliotecaMVC.Data;
-using BibliotecaMVC.Models;
-using BibliotecaMVC.ViewModels;
+using Biblioteca.Data;
+using Biblioteca.Models;
+using Biblioteca.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class LivroController : BaseController
     {

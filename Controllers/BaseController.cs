@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class BaseController : Controller
     {

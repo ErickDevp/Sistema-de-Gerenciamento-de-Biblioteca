@@ -1,8 +1,8 @@
-using BibliotecaMVC.Data;
-using BibliotecaMVC.Models;
+using Biblioteca.Data;
+using Biblioteca.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BibliotecaMVC.Services
+namespace Biblioteca.Services
 {
     public class UsuarioService
     {

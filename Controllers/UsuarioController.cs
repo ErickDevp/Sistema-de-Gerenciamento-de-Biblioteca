@@ -1,9 +1,9 @@
-using BibliotecaMVC.Models;
-using BibliotecaMVC.Services;
+using Biblioteca.Models;
+using Biblioteca.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class UsuarioController : BaseController
     {

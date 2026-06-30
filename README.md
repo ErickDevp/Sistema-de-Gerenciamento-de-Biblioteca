@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-# 📚 BibliotecaMVC — Sistema de Gerenciamento de Biblioteca
+# 📚 Biblioteca — Sistema de Gerenciamento de Biblioteca
 
-Sistema web desenvolvido em **C# ASP.NET MVC (.NET 8)** para gerenciamento interno de biblioteca, com controle de acervo, usuários, categorias e empréstimos.
+Sistema web desenvolvido em **C# ASP.NET MVC** para gerenciamento interno de biblioteca, com controle de acervo, usuários, categorias e empréstimos.
 
 ---
 
@@ -9,9 +8,9 @@ Sistema web desenvolvido em **C# ASP.NET MVC (.NET 8)** para gerenciamento inter
 
 | Tecnologia | Versão |
 |---|---|
-| .NET | 8.0 |
-| ASP.NET MVC | 8.0 |
-| Entity Framework Core | 8.0 |
+| .NET | 9.0 |
+| ASP.NET MVC | 9.0 |
+| Entity Framework Core | 9.0 |
 | SQL Server / LocalDB | — |
 | BCrypt.Net-Next | 4.0.3 |
 | Razor Views | — |
@@ -22,7 +21,7 @@ Sistema web desenvolvido em **C# ASP.NET MVC (.NET 8)** para gerenciamento inter
 ## 📁 Estrutura do Projeto
 
 ```
-BibliotecaMVC/
+Biblioteca/
 │
 ├── Controllers/
 │   ├── BaseController.cs          # Verificação de sessão (herança)
@@ -45,31 +44,34 @@ BibliotecaMVC/
 │
 ├── ViewModels/
 │   ├── LoginViewModel.cs
-│   ├── LivroViewModel.cs          # Inclui filtros de busca
+│   ├── LivroViewModel.cs
 │   └── EmprestimoViewModel.cs
 │
 ├── Services/
-│   ├── AuthService.cs             # Autenticação via Session
-│   └── UsuarioService.cs          # Lógica de negócio de usuários
+│   ├── AuthService.cs
+│   └── UsuarioService.cs
 │
 ├── Views/
 │   ├── Auth/Login.cshtml
-│   ├── Home/Index.cshtml          # Dashboard
-│   ├── Livro/                     # Index, Create, Edit, Delete, Details
-│   ├── Categoria/                 # Index, Create, Edit, Delete, Details
-│   ├── Emprestimo/                # Index, Create, Devolver, Details
-│   ├── Usuario/                   # Index, Create, Edit, Delete, Details
-│   └── Shared/_Layout.cshtml      # Layout com sidebar
+│   ├── Home/Index.cshtml
+│   ├── Livro/
+│   ├── Categoria/
+│   ├── Emprestimo/
+│   ├── Usuario/
+│   └── Shared/_Layout.cshtml
+│
+├── Properties/
+│   └── launchSettings.json        # Garante ambiente Development local
 │
 ├── wwwroot/
-│   ├── css/site.css               # Estilos globais
-│   ├── css/login.css              # Estilos da tela de login
-│   └── js/site.js                 # Scripts auxiliares
+│   ├── css/site.css
+│   ├── css/login.css
+│   └── js/site.js
 │
-├── Migrations/                    # Migration inicial gerada
+├── Migrations/
 ├── appsettings.json
 ├── Program.cs
-└── BibliotecaMVC.csproj
+└── Biblioteca.csproj
 ```
 
 ---
@@ -78,55 +80,22 @@ BibliotecaMVC/
 
 ### Pré-requisitos
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8)
+- [.NET SDK](https://dotnet.microsoft.com/download) (versão 8 ou 9)
 - SQL Server ou SQL Server Express / LocalDB
 - Visual Studio 2022 ou VS Code
 
 ### Passo a Passo
 
-**1. Clone ou extraia o projeto**
-
 ```bash
-cd BibliotecaMVC
-```
-
-**2. Configure a string de conexão**
-
-Edite o arquivo `appsettings.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=BibliotecaMVC;Trusted_Connection=True;"
-  }
-}
-```
-
-> Para SQL Server Express, use: `Server=.\\SQLEXPRESS;Database=BibliotecaMVC;Trusted_Connection=True;`
-
-**3. Restaure os pacotes NuGet**
-
-```bash
+# 1. Ajuste a connection string em appsettings.json se necessário
+# 2. Restaure os pacotes
 dotnet restore
-```
 
-**4. Execute as migrations (banco será criado automaticamente)**
-
-O banco é criado automaticamente via `EnsureCreated()` no `DbSeeder` ao iniciar a aplicação.
-
-Opcionalmente, para usar migrations:
-
-```bash
-dotnet ef database update
-```
-
-**5. Execute o projeto**
-
-```bash
+# 3. Execute (banco criado automaticamente)
 dotnet run
 ```
 
-Acesse: `https://localhost:5001` ou `http://localhost:5000`
+Acesse: `http://localhost:5000`
 
 ---
 
@@ -193,79 +162,13 @@ Livro     (1) ──── (N) Emprestimo
 
 ---
 
-## 🔌 Endpoints Disponíveis
+## 🔧 Correção Aplicada — Rotas Internas
 
-### Auth
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /Auth/Login | Tela de login |
-| POST | /Auth/Login | Autenticar |
-| POST | /Auth/Logout | Encerrar sessão |
+Se o sistema redirecionava de volta para o Login (ou dava erro) ao acessar `/Usuario`, `/Livro` ou `/Categoria`, o motivo era o middleware `UseHttpsRedirection()` sendo executado **antes** de `UseSession()`, em ambiente `Production` sem certificado HTTPS configurado — isso invalidava o cookie de sessão a cada requisição.
 
-### Livro
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /Livro | Listar (com busca) |
-| GET | /Livro/Create | Formulário |
-| POST | /Livro/Create | Cadastrar |
-| GET | /Livro/Edit/{id} | Formulário edição |
-| POST | /Livro/Edit/{id} | Atualizar |
-| GET | /Livro/Delete/{id} | Confirmar exclusão |
-| POST | /Livro/Delete/{id} | Excluir |
-| GET | /Livro/Details/{id} | Detalhes |
-
-### Categoria
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /Categoria | Listar |
-| GET/POST | /Categoria/Create | Cadastrar |
-| GET/POST | /Categoria/Edit/{id} | Editar |
-| GET/POST | /Categoria/Delete/{id} | Excluir |
-| GET | /Categoria/Details/{id} | Detalhes |
-
-### Emprestimo
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /Emprestimo | Listar todos |
-| GET | /Emprestimo/Create | Formulário |
-| POST | /Emprestimo/Create | Registrar empréstimo |
-| GET | /Emprestimo/Devolver/{id} | Tela de devolução |
-| POST | /Emprestimo/Devolver/{id} | Registrar devolução |
-| GET | /Emprestimo/Details/{id} | Detalhes |
-
-### Usuario (Admin only)
-| Método | Rota | Descrição |
-|---|---|---|
-| GET | /Usuario | Listar |
-| GET/POST | /Usuario/Create | Cadastrar |
-| GET/POST | /Usuario/Edit/{id} | Editar |
-| GET/POST | /Usuario/Delete/{id} | Excluir |
-| GET | /Usuario/Details/{id} | Detalhes |
-
----
-
-## 💡 Funcionalidades Destacadas
-
-- **Dashboard** com estatísticas em tempo real (livros, empréstimos, atrasos)
-- **Busca de livros** por título, autor e categoria
-- **Detecção automática de atrasos** ao acessar a lista de empréstimos
-- **Seed automático** de dados iniciais na primeira execução
-- **Senhas criptografadas** com BCrypt
-- **Proteção CSRF** com AntiForgeryToken em todos os formulários
-- **Controle de sessão** via ASP.NET Session
-- **Interface responsiva** com sidebar e layout moderno
-- **Validação server-side** com Data Annotations + jQuery Validate client-side
-
----
-
-## 📦 Pacotes NuGet
-
-```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
-<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
-```
+Correção aplicada em `Program.cs`:
+- `UseHttpsRedirection()` agora só roda em ambiente não-Development (produção real, com HTTPS configurado)
+- Adicionado `Properties/launchSettings.json` para forçar `ASPNETCORE_ENVIRONMENT=Development` ao rodar localmente via `dotnet run`
 
 ---
 
@@ -281,7 +184,4 @@ Livro     (1) ──── (N) Emprestimo
 
 ---
 
-*BibliotecaMVC — Projeto acadêmico de Sistema de Gerenciamento de Biblioteca em ASP.NET MVC*
-=======
-# Sistema-de-Gerenciamento-de-Biblioteca
->>>>>>> 76382413345f3e3cd9e96b9887cfc89865790af7
+*Biblioteca — Sistema de Gerenciamento de Biblioteca em ASP.NET MVC*

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BibliotecaMVC.Models
+namespace Biblioteca.Models
 {
     public class Emprestimo
     {

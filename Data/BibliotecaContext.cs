@@ -1,7 +1,7 @@
-using BibliotecaMVC.Models;
+using Biblioteca.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace BibliotecaMVC.Data
+namespace Biblioteca.Data
 {
     public class BibliotecaContext : DbContext
     {

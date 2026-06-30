@@ -1,6 +1,6 @@
-using BibliotecaMVC.Models;
+using Biblioteca.Models;
 
-namespace BibliotecaMVC.Data
+namespace Biblioteca.Data
 {
     public static class DbSeeder
     {

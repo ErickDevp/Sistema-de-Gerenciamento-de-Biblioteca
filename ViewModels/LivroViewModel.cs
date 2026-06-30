@@ -1,8 +1,8 @@
-using BibliotecaMVC.Models;
+using Biblioteca.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace BibliotecaMVC.ViewModels
+namespace Biblioteca.ViewModels
 {
     public class LivroViewModel
     {

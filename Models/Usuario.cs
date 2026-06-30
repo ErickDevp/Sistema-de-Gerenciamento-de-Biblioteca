@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BibliotecaMVC.Models
+namespace Biblioteca.Models
 {
     public class Usuario
     {

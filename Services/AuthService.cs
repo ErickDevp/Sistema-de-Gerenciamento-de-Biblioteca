@@ -1,7 +1,7 @@
-using BibliotecaMVC.Data;
-using BibliotecaMVC.Models;
+using Biblioteca.Data;
+using Biblioteca.Models;
 
-namespace BibliotecaMVC.Services
+namespace Biblioteca.Services
 {
     public class AuthService
     {

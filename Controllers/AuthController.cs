@@ -1,8 +1,8 @@
-using BibliotecaMVC.Services;
-using BibliotecaMVC.ViewModels;
+using Biblioteca.Services;
+using Biblioteca.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class AuthController : Controller
     {

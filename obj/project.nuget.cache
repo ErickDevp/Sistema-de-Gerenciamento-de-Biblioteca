@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Y3kk0B7lV5k=",
+  "dgSpecHash": "3zlgcHwKNrE=",
   "success": true,
-  "projectFilePath": "D:\\2. Programação - Estudos\\1. Programação\\Web 2\\BibliotecaMVC\\BibliotecaMVC.csproj",
+  "projectFilePath": "D:\\2. Programação - Estudos\\1. Programação\\Web 2\\Biblioteca\\Biblioteca.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Erick - Programar\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\Erick - Programar\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

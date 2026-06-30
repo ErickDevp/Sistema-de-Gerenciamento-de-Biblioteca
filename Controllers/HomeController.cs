@@ -1,8 +1,8 @@
-using BibliotecaMVC.Data;
+using Biblioteca.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BibliotecaMVC.Controllers
+namespace Biblioteca.Controllers
 {
     public class HomeController : BaseController
     {
