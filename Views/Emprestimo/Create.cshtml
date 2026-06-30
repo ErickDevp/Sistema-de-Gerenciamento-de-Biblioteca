@@ -1,0 +1,61 @@
+@model EmprestimoViewModel
+@{
+    ViewData["Title"] = "Novo Empréstimo";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Emprestimo">Empréstimos</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Novo</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>➕ Registrar Empréstimo</h1>
+        <p>Preencha os dados para registrar um novo empréstimo</p>
+    </div>
+</div>
+
+<div class="card" style="max-width:620px">
+    <div class="card-header">📋 Dados do Empréstimo</div>
+    <div class="card-body">
+        <form method="post" asp-action="Create" asp-controller="Emprestimo">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label asp-for="LivroId" class="form-label">Livro <span class="required">*</span></label>
+                <select asp-for="LivroId" class="form-control" asp-items="Model.LivrosDisponiveis">
+                    <option value="">Selecione um livro disponível...</option>
+                </select>
+                <span asp-validation-for="LivroId" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="NomeLeitor" class="form-label">Nome do Leitor <span class="required">*</span></label>
+                <input asp-for="NomeLeitor" class="form-control" placeholder="Nome completo do leitor" />
+                <span asp-validation-for="NomeLeitor" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="DataPrevistaDevolucao" class="form-label">Data Prevista de Devolução <span class="required">*</span></label>
+                <input asp-for="DataPrevistaDevolucao" class="form-control" type="date"
+                       min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")"
+                       value="@Model.DataPrevistaDevolucao.ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="DataPrevistaDevolucao" class="field-validation-error"></span>
+            </div>
+
+            <div class="alert alert-info">
+                ℹ️ Apenas livros <strong>disponíveis</strong> são exibidos na lista. Ao registrar o empréstimo, o livro será marcado como <strong>indisponível</strong> automaticamente.
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">📋 Registrar Empréstimo</button>
+                <a href="/Emprestimo" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

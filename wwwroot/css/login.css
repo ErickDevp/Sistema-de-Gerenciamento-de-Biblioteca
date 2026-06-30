@@ -1,0 +1,118 @@
+/* ============================================
+   LOGIN PAGE
+   ============================================ */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%);
+    padding: 20px;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+}
+
+.login-header {
+    background: #1a3a5c;
+    padding: 36px 40px 28px;
+    text-align: center;
+    color: #fff;
+}
+
+.login-logo {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.login-header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.login-header p {
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
+
+.login-body {
+    padding: 36px 40px;
+}
+
+.login-body .form-group {
+    margin-bottom: 20px;
+}
+
+.login-body .form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.login-body .form-control {
+    padding: 11px 14px;
+    font-size: 0.95rem;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+}
+
+.login-body .form-control:focus {
+    border-color: #2563a8;
+    box-shadow: 0 0 0 3px rgba(37,99,168,0.15);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 13px;
+    background: #1a3a5c;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 8px;
+}
+
+.btn-login:hover {
+    background: #2563a8;
+}
+
+.login-footer {
+    padding: 16px 40px 28px;
+    text-align: center;
+    border-top: 1px solid #f3f4f6;
+}
+
+.login-footer p {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+.login-hint {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #0369a1;
+}
+
+.login-hint strong {
+    display: block;
+    margin-bottom: 4px;
+}

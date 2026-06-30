@@ -1,0 +1,75 @@
+@model Emprestimo
+@{
+    ViewData["Title"] = "Registrar Devolução";
+    var hoje = DateTime.Now.Date;
+    var atrasado = Model.DataPrevistaDevolucao.Date < hoje;
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Emprestimo">Empréstimos</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Devolução</li>
+</ul>
+
+<div class="page-header">
+    <h1>↩️ Registrar Devolução</h1>
+</div>
+
+<div class="card" style="max-width:600px">
+    <div class="card-header">📋 Confirmação de Devolução</div>
+    <div class="card-body">
+
+        @if (atrasado)
+        {
+            <div class="alert alert-danger">
+                ⚠️ Este empréstimo está <strong>atrasado</strong>!
+                Previsão era @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy") —
+                @((hoje - Model.DataPrevistaDevolucao.Date).Days) dia(s) de atraso.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                ℹ️ Confirme a devolução do livro abaixo. O livro voltará a ficar disponível automaticamente.
+            </div>
+        }
+
+        <div class="detail-grid" style="margin:20px 0">
+            <div class="detail-item">
+                <label>Livro</label>
+                <p>@Model.Livro?.Titulo</p>
+            </div>
+            <div class="detail-item">
+                <label>Autor</label>
+                <p>@Model.Livro?.Autor</p>
+            </div>
+            <div class="detail-item">
+                <label>Leitor</label>
+                <p>@Model.NomeLeitor</p>
+            </div>
+            <div class="detail-item">
+                <label>Data do Empréstimo</label>
+                <p>@Model.DataEmprestimo.ToString("dd/MM/yyyy")</p>
+            </div>
+            <div class="detail-item">
+                <label>Previsão de Devolução</label>
+                <p style="color: @(atrasado ? "#dc3545" : "inherit")">
+                    @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
+                    @if (atrasado) { <text> ⚠️</text> }
+                </p>
+            </div>
+            <div class="detail-item">
+                <label>Data de Devolução (hoje)</label>
+                <p>@hoje.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+
+        <form method="post" asp-action="Devolver" asp-controller="Emprestimo" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">✅ Confirmar Devolução</button>
+                <a href="/Emprestimo" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,61 @@
+@model IEnumerable<Categoria>
+@{
+    ViewData["Title"] = "Categorias";
+}
+
+<div class="page-header">
+    <div>
+        <h1>🏷️ Categorias</h1>
+        <p>Gerencie as categorias do acervo</p>
+    </div>
+    <a href="/Categoria/Create" class="btn btn-primary">➕ Nova Categoria</a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        🏷️ Lista de Categorias
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">@Model.Count() categoria(s)</span>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">🏷️</div>
+                <h3>Nenhuma categoria cadastrada</h3>
+                <p>Clique em "Nova Categoria" para começar.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Qtd. Livros</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var cat in Model)
+                        {
+                            <tr>
+                                <td style="color:#9ca3af">@cat.Id</td>
+                                <td><strong>@cat.Nome</strong></td>
+                                <td><span class="badge badge-secondary">@cat.Livros.Count livro(s)</span></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Categoria/Details/@cat.Id" class="btn btn-sm btn-outline">👁</a>
+                                        <a href="/Categoria/Edit/@cat.Id" class="btn btn-sm btn-warning">✏️</a>
+                                        <a href="/Categoria/Delete/@cat.Id" class="btn btn-sm btn-danger">🗑</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

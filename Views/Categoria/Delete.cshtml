@@ -1,0 +1,50 @@
+@model Categoria
+@{
+    ViewData["Title"] = "Excluir Categoria";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Categoria">Categorias</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Excluir</li>
+</ul>
+
+<div class="page-header">
+    <h1>🗑️ Excluir Categoria</h1>
+</div>
+
+<div class="card" style="max-width:500px">
+    <div class="card-header">⚠️ Confirmar Exclusão</div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            ⚠️ Tem certeza que deseja excluir a categoria <strong>@Model.Nome</strong>?
+        </div>
+
+        @if (Model.Livros.Any())
+        {
+            <div class="alert alert-warning">
+                🚫 Esta categoria possui <strong>@Model.Livros.Count livro(s)</strong> associado(s) e não pode ser excluída.
+            </div>
+        }
+
+        <div class="detail-item" style="margin-bottom:16px">
+            <label>Nome da Categoria</label>
+            <p>@Model.Nome</p>
+        </div>
+        <div class="detail-item" style="margin-bottom:20px">
+            <label>Livros Associados</label>
+            <p>@Model.Livros.Count livro(s)</p>
+        </div>
+
+        <form method="post" asp-action="Delete" asp-controller="Categoria" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                @if (!Model.Livros.Any())
+                {
+                    <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
+                }
+                <a href="/Categoria" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

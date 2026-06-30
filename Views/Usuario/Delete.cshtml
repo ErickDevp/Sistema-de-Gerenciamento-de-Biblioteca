@@ -1,0 +1,46 @@
+@model Usuario
+@{
+    ViewData["Title"] = "Excluir Usuário";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Usuario">Usuários</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Excluir</li>
+</ul>
+
+<div class="page-header">
+    <h1>🗑️ Excluir Usuário</h1>
+</div>
+
+<div class="card" style="max-width:500px">
+    <div class="card-header">⚠️ Confirmar Exclusão</div>
+    <div class="card-body">
+        <div class="alert alert-danger">
+            ⚠️ Tem certeza que deseja excluir o usuário <strong>@Model.Nome</strong>? Esta ação não pode ser desfeita.
+        </div>
+
+        <div class="detail-grid" style="margin-bottom:20px">
+            <div class="detail-item">
+                <label>Nome</label>
+                <p>@Model.Nome</p>
+            </div>
+            <div class="detail-item">
+                <label>E-mail</label>
+                <p>@Model.Email</p>
+            </div>
+            <div class="detail-item">
+                <label>Cargo</label>
+                <p>@Model.Role</p>
+            </div>
+        </div>
+
+        <form method="post" asp-action="Delete" asp-controller="Usuario" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
+                <a href="/Usuario" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Biblioteca</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+<div class="layout-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <a href="/" class="sidebar-brand">
+            <span class="brand-icon">📚</span>
+            <div>
+                <span class="brand-text">Biblioteca</span>
+                <span class="brand-sub">Sistema de Gestão</span>
+            </div>
+        </a>
+
+        <nav class="sidebar-nav">
+            <span class="nav-section-title">Principal</span>
+            <a href="/Home">
+                <span class="nav-icon">🏠</span> Dashboard
+            </a>
+
+            <span class="nav-section-title">Acervo</span>
+            <a href="/Livro">
+                <span class="nav-icon">📖</span> Livros
+            </a>
+            <a href="/Categoria">
+                <span class="nav-icon">🏷️</span> Categorias
+            </a>
+
+            <span class="nav-section-title">Circulação</span>
+            <a href="/Emprestimo">
+                <span class="nav-icon">📋</span> Empréstimos
+            </a>
+            <a href="/Emprestimo/Create">
+                <span class="nav-icon">➕</span> Novo Empréstimo
+            </a>
+
+            @if (ViewBag.UsuarioRole == "Administrador")
+            {
+                <span class="nav-section-title">Administração</span>
+                <a href="/Usuario">
+                    <span class="nav-icon">👥</span> Usuários
+                </a>
+            }
+        </nav>
+
+        <div class="sidebar-footer">
+            &copy; @DateTime.Now.Year Biblioteca
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <span class="topbar-title">@ViewData["Title"]</span>
+
+            <div class="topbar-user">
+                <div class="user-avatar">
+                    @(ViewBag.UsuarioNome?.ToString()?.Substring(0, 1)?.ToUpper() ?? "U")
+                </div>
+                <div class="user-info">
+                    <strong>@ViewBag.UsuarioNome</strong>
+                    <span>@ViewBag.UsuarioRole</span>
+                </div>
+                <form method="post" action="/Auth/Logout" style="margin:0">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-logout">Sair</button>
+                </form>
+            </div>
+        </header>
+
+        <!-- PAGE -->
+        <main class="page-content">
+
+            @if (TempData["Sucesso"] != null)
+            {
+                <div class="alert alert-success" data-auto-dismiss>
+                    ✅ @TempData["Sucesso"]
+                </div>
+            }
+
+            @if (TempData["Erro"] != null)
+            {
+                <div class="alert alert-danger" data-auto-dismiss>
+                    ❌ @TempData["Erro"]
+                </div>
+            }
+
+            @RenderBody()
+        </main>
+    </div>
+</div>
+
+<script src="~/js/site.js"></script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

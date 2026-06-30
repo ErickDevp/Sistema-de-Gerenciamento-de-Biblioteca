@@ -1,0 +1,39 @@
+@model Categoria
+@{
+    ViewData["Title"] = "Editar Categoria";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Categoria">Categorias</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Editar</li>
+</ul>
+
+<div class="page-header">
+    <h1>✏️ Editar Categoria</h1>
+</div>
+
+<div class="card" style="max-width:500px">
+    <div class="card-header">🏷️ @Model.Nome</div>
+    <div class="card-body">
+        <form method="post" asp-action="Edit" asp-controller="Categoria" asp-route-id="@Model.Id">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Nome" class="form-label">Nome <span class="required">*</span></label>
+                <input asp-for="Nome" class="form-control" />
+                <span asp-validation-for="Nome" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">💾 Salvar</button>
+                <a href="/Categoria" class="btn btn-secondary">← Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
