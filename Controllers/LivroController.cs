@@ -125,6 +125,8 @@ namespace Biblioteca.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            // Remove empréstimos históricos (devolvidos) antes de remover o livro
+            _context.Emprestimos.RemoveRange(livro.Emprestimos);
             _context.Livros.Remove(livro);
             _context.SaveChanges();
             TempData["Sucesso"] = "Livro excluído com sucesso!";

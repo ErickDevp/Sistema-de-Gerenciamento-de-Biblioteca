@@ -7,19 +7,26 @@ namespace Biblioteca.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var session = context.HttpContext.Session;
-            var usuarioId = session.GetInt32("UsuarioId");
+            try
+            {
+                var session = context.HttpContext.Session;
+                var usuarioId = session.GetInt32("UsuarioId");
 
-            if (usuarioId == null)
+                if (usuarioId == null)
+                {
+                    context.Result = new RedirectToActionResult("Login", "Auth", null);
+                    return;
+                }
+
+                ViewBag.UsuarioNome = session.GetString("UsuarioNome");
+                ViewBag.UsuarioRole = session.GetString("UsuarioRole");
+
+                base.OnActionExecuting(context);
+            }
+            catch
             {
                 context.Result = new RedirectToActionResult("Login", "Auth", null);
-                return;
             }
-
-            ViewBag.UsuarioNome = session.GetString("UsuarioNome");
-            ViewBag.UsuarioRole = session.GetString("UsuarioRole");
-
-            base.OnActionExecuting(context);
         }
 
         protected bool EhAdministrador()

@@ -155,3 +155,4 @@ D:\2. Programação - Estudos\1. Programação\Web 2\Biblioteca\obj\Debug\net9.0
 D:\2. Programação - Estudos\1. Programação\Web 2\Biblioteca\obj\Debug\net9.0\Biblioteca.pdb
 D:\2. Programação - Estudos\1. Programação\Web 2\Biblioteca\obj\Debug\net9.0\Biblioteca.genruntimeconfig.cache
 D:\2. Programação - Estudos\1. Programação\Web 2\Biblioteca\obj\Debug\net9.0\ref\Biblioteca.dll
+D:\2. Programação - Estudos\1. Programação\Web 2\Biblioteca\obj\Debug\net9.0\Biblioteca.sourcelink.json
