@@ -3,18 +3,17 @@
     ViewData["Title"] = "Detalhes do Empréstimo";
     var hoje = DateTime.Now.Date;
     var atrasado = Model.Status != "Devolvido" && Model.DataPrevistaDevolucao.Date < hoje;
+    var diasAtraso = atrasado ? (hoje - Model.DataPrevistaDevolucao.Date).Days : 0;
 }
 
 <ul class="breadcrumb">
     <li><a href="/Emprestimo">Empréstimos</a></li>
     <li class="breadcrumb-separator">›</li>
-    <li>Detalhes</li>
+    <li>Empréstimo #@Model.Id</li>
 </ul>
 
 <div class="page-header">
-    <div>
-        <h1>👁️ Detalhes do Empréstimo</h1>
-    </div>
+    <div><h1>Detalhes do Empréstimo</h1></div>
     <div class="btn-group">
         @if (Model.Status != "Devolvido")
         {
@@ -24,61 +23,106 @@
     </div>
 </div>
 
-<div class="card" style="max-width:700px">
-    <div class="card-header">
-        📋 Empréstimo #@Model.Id
-        @if (Model.Status == "Devolvido")
-        {
-            <span class="badge badge-success" style="margin-left:auto">Devolvido</span>
-        }
-        else if (atrasado)
-        {
-            <span class="badge badge-danger" style="margin-left:auto">⚠ Atrasado</span>
-        }
-        else
-        {
-            <span class="badge badge-primary" style="margin-left:auto">Ativo</span>
-        }
+@if (atrasado)
+{
+    <div class="info-box danger" style="margin-bottom:16px">
+        <span class="ib-icon">⚠️</span>
+        <span>Este empréstimo está <strong>@diasAtraso dia(s) atrasado</strong>! A devolução estava prevista para @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy").</span>
     </div>
-    <div class="card-body">
-        <div class="detail-grid">
-            <div class="detail-item">
-                <label>Livro</label>
-                <p><a href="/Livro/Details/@Model.LivroId" style="color:#2563a8">@Model.Livro?.Titulo</a></p>
-            </div>
-            <div class="detail-item">
-                <label>Autor</label>
-                <p>@Model.Livro?.Autor</p>
-            </div>
-            <div class="detail-item">
-                <label>Categoria</label>
-                <p>@Model.Livro?.Categoria?.Nome</p>
-            </div>
-            <div class="detail-item">
-                <label>Leitor</label>
-                <p>@Model.NomeLeitor</p>
-            </div>
-            <div class="detail-item">
-                <label>Data do Empréstimo</label>
-                <p>@Model.DataEmprestimo.ToString("dd/MM/yyyy HH:mm")</p>
-            </div>
-            <div class="detail-item">
-                <label>Previsão de Devolução</label>
-                <p style="color:@(atrasado ? "#dc3545" : "inherit")">
-                    @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
-                    @if (atrasado)
-                    {
-                        <text> — @((hoje - Model.DataPrevistaDevolucao.Date).Days) dia(s) de atraso</text>
-                    }
-                </p>
-            </div>
-            @if (Model.DataDevolucao.HasValue)
-            {
-                <div class="detail-item">
-                    <label>Data de Devolução</label>
-                    <p>@Model.DataDevolucao.Value.ToString("dd/MM/yyyy HH:mm")</p>
+}
+
+<div class="detail-page">
+    <div>
+        <div class="detail-card">
+            <div class="detail-hero">
+                <div class="hero-icon">📋</div>
+                <div>
+                    <div class="hero-title">@Model.Livro?.Titulo</div>
+                    <div class="hero-sub">Leitor: @Model.NomeLeitor</div>
                 </div>
-            }
+                @if (Model.Status == "Devolvido")
+                { <span class="hero-badge returned">✓ Devolvido</span> }
+                else if (atrasado)
+                { <span class="hero-badge late">⚠ Atrasado</span> }
+                else
+                { <span class="hero-badge active">● Ativo</span> }
+            </div>
+            <div class="detail-fields">
+                <div class="detail-fields-grid">
+                    <div class="detail-field">
+                        <div class="df-label">Livro</div>
+                        <div class="df-value"><a href="/Livro/Details/@Model.LivroId">@Model.Livro?.Titulo</a></div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Autor</div>
+                        <div class="df-value">@Model.Livro?.Autor</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Categoria</div>
+                        <div class="df-value">@Model.Livro?.Categoria?.Nome</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Leitor</div>
+                        <div class="df-value">@Model.NomeLeitor</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Data do Empréstimo</div>
+                        <div class="df-value">@Model.DataEmprestimo.ToString("dd/MM/yyyy HH:mm")</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Previsão de Devolução</div>
+                        <div class="df-value @(atrasado ? "late-text" : "")">
+                            @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
+                            @if (atrasado) { <text> <span style="font-size:0.8rem">(+@diasAtraso dias)</span></text> }
+                        </div>
+                    </div>
+                    @if (Model.DataDevolucao.HasValue)
+                    {
+                        <div class="detail-field">
+                            <div class="df-label">Devolvido em</div>
+                            <div class="df-value">@Model.DataDevolucao.Value.ToString("dd/MM/yyyy HH:mm")</div>
+                        </div>
+                        <div class="detail-field">
+                            <div class="df-label">Duração</div>
+                            <div class="df-value">@((Model.DataDevolucao.Value.Date - Model.DataEmprestimo.Date).Days) dia(s)</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-sidebar">
+        <div class="detail-actions-card">
+            <div class="dac-header">Ações</div>
+            <div class="dac-body">
+                @if (Model.Status != "Devolvido")
+                {
+                    <a href="/Emprestimo/Devolver/@Model.Id" class="dac-btn success">↩ Registrar Devolução</a>
+                }
+                <a href="/Livro/Details/@Model.LivroId" class="dac-btn primary">📖 Ver Livro</a>
+                <a href="/Emprestimo" class="dac-btn secondary">← Voltar à Lista</a>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">📊 Resumo</div>
+            <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">🆔</span>
+                    <span class="info-text">Empréstimo <strong>#@Model.Id</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📅</span>
+                    <span class="info-text">Prazo: <strong>@Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</strong></span>
+                </div>
+                @if (Model.Status == "Devolvido")
+                {
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text"><strong>Concluído</strong> em @Model.DataDevolucao?.ToString("dd/MM")</span>
+                    </div>
+                }
+            </div>
         </div>
     </div>
 </div>

@@ -1,0 +1,71 @@
+@* Parâmetros: paginaAtual, totalPaginas, paginasVisiveis, urlBase (sem ?pagina=) *@
+@{
+    int paginaAtual = (int)(ViewData["PaginaAtual"] ?? 1);
+    int totalPaginas = (int)(ViewData["TotalPaginas"] ?? 1);
+    int totalItens = (int)(ViewData["TotalItens"] ?? 0);
+    int tamanhoPagina = (int)(ViewData["TamanhoPagina"] ?? 10);
+    string urlBase = (string)(ViewData["UrlBase"] ?? "");
+    var paginasVisiveis = (List<int?>)(ViewData["PaginasVisiveis"] ?? new List<int?>());
+
+    string PaginaUrl(int p) => string.IsNullOrEmpty(urlBase)
+        ? $"?pagina={p}"
+        : (urlBase.Contains("?") ? $"{urlBase}&pagina={p}" : $"{urlBase}?pagina={p}");
+
+    int inicio = ((paginaAtual - 1) * tamanhoPagina) + 1;
+    int fim = Math.Min(paginaAtual * tamanhoPagina, totalItens);
+}
+
+@if (totalPaginas > 1)
+{
+    <div class="paginacao-wrapper">
+        <div class="paginacao-info">
+            Mostrando <strong>@inicio–@fim</strong> de <strong>@totalItens</strong> registro(s)
+        </div>
+        <nav class="paginacao">
+            @* Anterior *@
+            @if (paginaAtual > 1)
+            {
+                <a href="@PaginaUrl(paginaAtual - 1)" class="pag-btn">‹</a>
+            }
+            else
+            {
+                <span class="pag-btn disabled">‹</span>
+            }
+
+            @* Números *@
+            @foreach (var p in paginasVisiveis)
+            {
+                if (p == null)
+                {
+                    <span class="pag-ellipsis">…</span>
+                }
+                else if (p == paginaAtual)
+                {
+                    <span class="pag-btn active">@p</span>
+                }
+                else
+                {
+                    <a href="@PaginaUrl((int)p)" class="pag-btn">@p</a>
+                }
+            }
+
+            @* Próxima *@
+            @if (paginaAtual < totalPaginas)
+            {
+                <a href="@PaginaUrl(paginaAtual + 1)" class="pag-btn">›</a>
+            }
+            else
+            {
+                <span class="pag-btn disabled">›</span>
+            }
+        </nav>
+    </div>
+}
+else if (totalItens > 0)
+{
+    <div class="paginacao-wrapper">
+        <div class="paginacao-info">
+            <strong>@totalItens</strong> registro(s) encontrado(s)
+        </div>
+    </div>
+}

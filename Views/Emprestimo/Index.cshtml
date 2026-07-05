@@ -1,29 +1,70 @@
-@model IEnumerable<Emprestimo>
+@model Biblioteca.ViewModels.PaginatedList<Emprestimo>
 @{
     ViewData["Title"] = "Empréstimos";
     var hoje = DateTime.Now.Date;
+    var filtroStatus = (string?)ViewBag.FiltroStatus ?? "";
+    var totalAtrasados = (int)(ViewBag.TotalAtrasados ?? 0);
+
+    string UrlFiltro(string status, int pag = 1)
+    {
+        var s = string.IsNullOrEmpty(status) ? "" : $"filtroStatus={status}&";
+        return $"/Emprestimo?{s}pagina={pag}";
+    }
+
+    ViewData["PaginaAtual"]     = Model.PaginaAtual;
+    ViewData["TotalPaginas"]    = Model.TotalPaginas;
+    ViewData["TotalItens"]      = Model.TotalItens;
+    ViewData["TamanhoPagina"]   = Model.TamanhoPagina;
+    ViewData["PaginasVisiveis"] = Model.PaginasVisiveis();
+    ViewData["UrlBase"]         = string.IsNullOrEmpty(filtroStatus) ? "/Emprestimo" : $"/Emprestimo?filtroStatus={filtroStatus}";
 }
 
 <div class="page-header">
     <div>
         <h1>📋 Empréstimos</h1>
-        <p>Controle de empréstimos e devoluções</p>
+        <p>@Model.TotalItens registro(s) encontrado(s)</p>
     </div>
     <a href="/Emprestimo/Create" class="btn btn-primary">➕ Novo Empréstimo</a>
+</div>
+
+@if (totalAtrasados > 0)
+{
+    <div class="alert alert-warning" data-auto-dismiss>
+        ⚠️ Existem <strong>@totalAtrasados empréstimo(s) atrasado(s)</strong>.
+        <a href="@UrlFiltro("Atrasado")" style="margin-left:8px; color:inherit; font-weight:700;">Ver atrasados →</a>
+    </div>
+}
+
+<!-- FILTROS DE STATUS -->
+<div class="status-filters">
+    <a href="@UrlFiltro("")" class="status-filter-btn all @(string.IsNullOrEmpty(filtroStatus) ? "active-filter" : "")">
+        📋 Todos
+    </a>
+    <a href="@UrlFiltro("Ativo")" class="status-filter-btn ativo @(filtroStatus == "Ativo" ? "active-filter" : "")">
+        ● Ativos
+    </a>
+    <a href="@UrlFiltro("Devolvido")" class="status-filter-btn devolvido @(filtroStatus == "Devolvido" ? "active-filter" : "")">
+        ✓ Devolvidos
+    </a>
+    <a href="@UrlFiltro("Atrasado")" class="status-filter-btn atrasado @(filtroStatus == "Atrasado" ? "active-filter" : "")">
+        ⚠ Atrasados
+    </a>
 </div>
 
 <div class="card">
     <div class="card-header">
         📋 Lista de Empréstimos
-        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">@Model.Count() registro(s)</span>
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">
+            Página @Model.PaginaAtual de @Model.TotalPaginas
+        </span>
     </div>
     <div class="card-body" style="padding:0">
-        @if (!Model.Any())
+        @if (!Model.Itens.Any())
         {
             <div class="empty-state">
                 <div class="empty-icon">📋</div>
-                <h3>Nenhum empréstimo registrado</h3>
-                <p>Clique em "Novo Empréstimo" para registrar o primeiro.</p>
+                <h3>Nenhum empréstimo encontrado</h3>
+                <p>@(string.IsNullOrEmpty(filtroStatus) ? "Registre o primeiro empréstimo." : $"Nenhum empréstimo com status \"{filtroStatus}\".")</p>
             </div>
         }
         else
@@ -36,50 +77,45 @@
                             <th>Livro</th>
                             <th>Leitor</th>
                             <th>Empréstimo</th>
-                            <th>Previsão Dev.</th>
+                            <th>Devolução Prevista</th>
                             <th>Devolvido em</th>
                             <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var emp in Model)
+                        @foreach (var emp in Model.Itens)
                         {
+                            var atrasado = emp.Status != "Devolvido" && emp.DataPrevistaDevolucao.Date < hoje;
                             <tr>
-                                <td style="color:#9ca3af">@emp.Id</td>
+                                <td style="color:#9ca3af; font-size:0.8rem">@emp.Id</td>
                                 <td><strong>@emp.Livro?.Titulo</strong></td>
                                 <td>@emp.NomeLeitor</td>
                                 <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
-                                    @if (emp.Status != "Devolvido" && emp.DataPrevistaDevolucao.Date < hoje)
+                                    @if (atrasado)
                                     {
-                                        <span style="color:#dc3545; font-size:0.75rem; display:block">
-                                            @((hoje - emp.DataPrevistaDevolucao.Date).Days) dia(s) de atraso
+                                        <span style="color:#dc3545; font-size:0.72rem; display:block">
+                                            +@((hoje - emp.DataPrevistaDevolucao.Date).Days) dia(s)
                                         </span>
                                     }
                                 </td>
                                 <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
                                 <td>
                                     @if (emp.Status == "Devolvido")
-                                    {
-                                        <span class="badge badge-success">Devolvido</span>
-                                    }
-                                    else if (emp.Status == "Atrasado")
-                                    {
-                                        <span class="badge badge-danger">⚠ Atrasado</span>
-                                    }
+                                    { <span class="badge badge-success">Devolvido</span> }
+                                    else if (emp.Status == "Atrasado" || atrasado)
+                                    { <span class="badge badge-danger">⚠ Atrasado</span> }
                                     else
-                                    {
-                                        <span class="badge badge-primary">Ativo</span>
-                                    }
+                                    { <span class="badge badge-primary">Ativo</span> }
                                 </td>
                                 <td>
                                     <div class="btn-group">
                                         <a href="/Emprestimo/Details/@emp.Id" class="btn btn-sm btn-outline">👁</a>
                                         @if (emp.Status != "Devolvido")
                                         {
-                                            <a href="/Emprestimo/Devolver/@emp.Id" class="btn btn-sm btn-success">↩ Devolver</a>
+                                            <a href="/Emprestimo/Devolver/@emp.Id" class="btn btn-sm btn-success">↩</a>
                                         }
                                     </div>
                                 </td>
@@ -88,6 +124,7 @@
                     </tbody>
                 </table>
             </div>
+            @await Html.PartialAsync("_Paginacao")
         }
     </div>
 </div>

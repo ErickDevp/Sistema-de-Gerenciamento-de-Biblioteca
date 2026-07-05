@@ -29,6 +29,10 @@ namespace Biblioteca.Models
         [Display(Name = "Disponível")]
         public bool Disponivel { get; set; } = true;
 
+        [StringLength(500)]
+        [Display(Name = "URL da Capa")]
+        public string? ImagemUrl { get; set; }
+
         // Navigation
         [ForeignKey("CategoriaId")]
         public Categoria? Categoria { get; set; }

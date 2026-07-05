@@ -6,60 +6,101 @@
 <ul class="breadcrumb">
     <li><a href="/Categoria">Categorias</a></li>
     <li class="breadcrumb-separator">›</li>
-    <li>Detalhes</li>
+    <li>@Model.Nome</li>
 </ul>
 
 <div class="page-header">
-    <h1>👁️ @Model.Nome</h1>
+    <div><h1>@Model.Nome</h1></div>
     <div class="btn-group">
         <a href="/Categoria/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
         <a href="/Categoria" class="btn btn-secondary">← Voltar</a>
     </div>
 </div>
 
-<div class="card" style="max-width:700px">
-    <div class="card-header">🏷️ Categoria: @Model.Nome</div>
-    <div class="card-body">
-        <div class="detail-item" style="margin-bottom:20px">
-            <label>Total de Livros</label>
-            <p>@Model.Livros.Count livro(s)</p>
-        </div>
-
-        @if (Model.Livros.Any())
-        {
-            <h4 style="font-size:0.9rem; margin-bottom:12px; color:#1a3a5c">Livros desta categoria</h4>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Título</th>
-                            <th>Autor</th>
-                            <th>Ano</th>
-                            <th>Disponível</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var livro in Model.Livros)
-                        {
-                            <tr>
-                                <td><a href="/Livro/Details/@livro.Id" style="color:#2563a8">@livro.Titulo</a></td>
-                                <td>@livro.Autor</td>
-                                <td>@livro.AnoPublicacao</td>
-                                <td>
-                                    @if (livro.Disponivel)
-                                    {
-                                        <span class="badge badge-success">Sim</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-danger">Não</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+<div class="detail-page">
+    <div>
+        <div class="detail-card">
+            <div class="detail-hero">
+                <div class="hero-icon">🏷️</div>
+                <div>
+                    <div class="hero-title">@Model.Nome</div>
+                    <div class="hero-sub">@Model.Livros.Count livro(s) nesta categoria</div>
+                </div>
             </div>
-        }
+
+            @if (Model.Livros.Any())
+            {
+                <div class="detail-section">
+                    <div class="detail-section-title">Livros desta Categoria</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Ano</th>
+                                    <th>Disponível</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var livro in Model.Livros)
+                                {
+                                    <tr>
+                                        <td><a href="/Livro/Details/@livro.Id" style="color:#2563a8">@livro.Titulo</a></td>
+                                        <td>@livro.Autor</td>
+                                        <td>@livro.AnoPublicacao</td>
+                                        <td>
+                                            @if (livro.Disponivel)
+                                            { <span class="badge badge-success">Sim</span> }
+                                            else
+                                            { <span class="badge badge-danger">Não</span> }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="detail-fields">
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <h3>Nenhum livro nesta categoria</h3>
+                        <p>Cadastre livros e associe a esta categoria.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="form-sidebar">
+        <div class="detail-actions-card">
+            <div class="dac-header">Ações</div>
+            <div class="dac-body">
+                <a href="/Categoria/Edit/@Model.Id" class="dac-btn warning">✏️ Editar Categoria</a>
+                <a href="/Livro/Create" class="dac-btn success">➕ Novo Livro</a>
+                <a href="/Categoria/Delete/@Model.Id" class="dac-btn danger">🗑 Excluir</a>
+                <a href="/Categoria" class="dac-btn secondary">← Voltar à Lista</a>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">📊 Estatísticas</div>
+            <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">📚</span>
+                    <span class="info-text">Total: <strong>@Model.Livros.Count livro(s)</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">✅</span>
+                    <span class="info-text">Disponíveis: <strong>@Model.Livros.Count(l => l.Disponivel)</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📤</span>
+                    <span class="info-text">Emprestados: <strong>@Model.Livros.Count(l => !l.Disponivel)</strong></span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

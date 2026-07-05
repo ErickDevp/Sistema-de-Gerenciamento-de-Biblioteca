@@ -10,57 +10,90 @@
 </ul>
 
 <div class="page-header">
-    <h1>✏️ Editar Usuário</h1>
+    <h1>Editar Usuário</h1>
 </div>
 
-<div class="card" style="max-width:600px">
-    <div class="card-header">👤 @Model.Nome</div>
-    <div class="card-body">
-        <form method="post" asp-action="Edit" asp-controller="Usuario" asp-route-id="@Model.Id">
-            @Html.AntiForgeryToken()
-            <input asp-for="Id" type="hidden" />
-            <input asp-for="SenhaHash" type="hidden" />
-
-            <div class="form-group">
-                <label asp-for="Nome" class="form-label">Nome <span class="required">*</span></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email" class="form-label">E-mail <span class="required">*</span></label>
-                <input asp-for="Email" class="form-control" type="email" />
-                <span asp-validation-for="Email" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Nova Senha</label>
-                    <input name="NovaSenha" class="form-control" type="password" placeholder="Deixe em branco para manter" />
-                    <span class="field-validation-error">@ViewData.ModelState["NovaSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+<form method="post" asp-action="Edit" asp-controller="Usuario" asp-route-id="@Model.Id">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="SenhaHash" type="hidden" />
+    <div class="form-page">
+        <div>
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon blue">👤</div>
+                    <div>
+                        <div class="fch-title">@Model.Nome</div>
+                        <div class="fch-sub">Editando dados do usuário</div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Confirmar Nova Senha</label>
-                    <input name="ConfirmarSenha" class="form-control" type="password" placeholder="Repita a nova senha" />
-                    <span class="field-validation-error">@ViewData.ModelState["ConfirmarSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+                <div class="form-card-body">
+                    <div class="form-section">
+                        <div class="form-section-title">Identificação</div>
+                        <div class="field">
+                            <label asp-for="Nome" class="field-label">Nome Completo <span class="req">*</span></label>
+                            <input asp-for="Nome" class="field-input" />
+                            <span asp-validation-for="Nome" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Email" class="field-label">E-mail <span class="req">*</span></label>
+                            <input asp-for="Email" class="field-input" type="email" />
+                            <span asp-validation-for="Email" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Alterar Senha <span style="font-size:0.75rem; font-weight:400; color:#9ca3af; text-transform:none; letter-spacing:0">(opcional)</span></div>
+                        <div class="fields-row">
+                            <div class="field">
+                                <label class="field-label">Nova Senha</label>
+                                <input name="NovaSenha" class="field-input" type="password" placeholder="Deixe em branco para manter" />
+                                <span class="field-error">@ViewData.ModelState["NovaSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+                            </div>
+                            <div class="field">
+                                <label class="field-label">Confirmar Nova Senha</label>
+                                <input name="ConfirmarSenha" class="field-input" type="password" placeholder="Repita a nova senha" />
+                                <span class="field-error">@ViewData.ModelState["ConfirmarSenha"]?.Errors.FirstOrDefault()?.ErrorMessage</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Permissões</div>
+                        <div class="field">
+                            <label asp-for="Role" class="field-label">Cargo <span class="req">*</span></label>
+                            <select asp-for="Role" class="field-input">
+                                <option value="Funcionario">👤 Funcionário</option>
+                                <option value="Administrador">👑 Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit">💾 Salvar Alterações</button>
+                    <a href="/Usuario/Details/@Model.Id" class="btn-cancel">← Cancelar</a>
                 </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Role" class="form-label">Cargo <span class="required">*</span></label>
-                <select asp-for="Role" class="form-control">
-                    <option value="Funcionario">👤 Funcionário</option>
-                    <option value="Administrador">👑 Administrador</option>
-                </select>
+        </div>
+        <div class="form-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">📋 Registro</div>
+                <div class="sidebar-card-body">
+                    <div class="info-item">
+                        <span class="info-icon">🆔</span>
+                        <span class="info-text">ID: <strong>#@Model.Id</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">@(Model.Role == "Administrador" ? "👑" : "👤")</span>
+                        <span class="info-text">Cargo atual: <strong>@Model.Role</strong></span>
+                    </div>
+                </div>
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">💾 Salvar Alterações</button>
-                <a href="/Usuario" class="btn btn-secondary">← Cancelar</a>
+            <div class="info-box info">
+                <span class="ib-icon">🔒</span>
+                <span>Deixe os campos de senha <strong>em branco</strong> para manter a senha atual.</span>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

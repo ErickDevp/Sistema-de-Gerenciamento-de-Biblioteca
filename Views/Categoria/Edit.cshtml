@@ -10,29 +10,52 @@
 </ul>
 
 <div class="page-header">
-    <h1>✏️ Editar Categoria</h1>
+    <h1>Editar Categoria</h1>
 </div>
 
-<div class="card" style="max-width:500px">
-    <div class="card-header">🏷️ @Model.Nome</div>
-    <div class="card-body">
-        <form method="post" asp-action="Edit" asp-controller="Categoria" asp-route-id="@Model.Id">
-            @Html.AntiForgeryToken()
-            <input asp-for="Id" type="hidden" />
-
-            <div class="form-group">
-                <label asp-for="Nome" class="form-label">Nome <span class="required">*</span></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="field-validation-error"></span>
+<form method="post" asp-action="Edit" asp-controller="Categoria" asp-route-id="@Model.Id">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <div class="form-page">
+        <div>
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon orange">🏷️</div>
+                    <div>
+                        <div class="fch-title">@Model.Nome</div>
+                        <div class="fch-sub">Editando categoria</div>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <div class="field">
+                        <label asp-for="Nome" class="field-label">Nome da Categoria <span class="req">*</span></label>
+                        <input asp-for="Nome" class="field-input" />
+                        <span asp-validation-for="Nome" class="field-error"></span>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit">💾 Salvar</button>
+                    <a href="/Categoria" class="btn-cancel">← Cancelar</a>
+                </div>
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">💾 Salvar</button>
-                <a href="/Categoria" class="btn btn-secondary">← Cancelar</a>
+        </div>
+        <div class="form-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">📊 Informações</div>
+                <div class="sidebar-card-body">
+                    <div class="info-item">
+                        <span class="info-icon">🆔</span>
+                        <span class="info-text">ID: <strong>#@Model.Id</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📚</span>
+                        <span class="info-text"><strong>@Model.Livros.Count</strong> livro(s) nesta categoria</span>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

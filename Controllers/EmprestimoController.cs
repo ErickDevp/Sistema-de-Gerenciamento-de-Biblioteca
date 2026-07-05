@@ -16,8 +16,9 @@ namespace Biblioteca.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? filtroStatus, int pagina = 1)
         {
+            const int tamanhoPagina = 10;
             var hoje = DateTime.Now.Date;
 
             // Atualiza status de atrasados
@@ -31,12 +32,20 @@ namespace Biblioteca.Controllers
             if (atrasados.Any())
                 _context.SaveChanges();
 
-            var emprestimos = _context.Emprestimos
+            var query = _context.Emprestimos
                 .Include(e => e.Livro)
-                .OrderByDescending(e => e.DataEmprestimo)
-                .ToList();
+                .AsQueryable();
 
-            return View(emprestimos);
+            if (!string.IsNullOrWhiteSpace(filtroStatus))
+                query = query.Where(e => e.Status == filtroStatus);
+
+            var paginado = PaginatedList<Emprestimo>.Criar(
+                query.OrderByDescending(e => e.DataEmprestimo), pagina, tamanhoPagina);
+
+            ViewBag.FiltroStatus = filtroStatus;
+            ViewBag.TotalAtrasados = _context.Emprestimos.Count(e => e.Status == "Atrasado");
+
+            return View(paginado);
         }
 
         public IActionResult Details(int id)

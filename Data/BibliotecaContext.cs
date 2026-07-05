@@ -42,6 +42,7 @@ namespace Biblioteca.Data
                 entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Autor).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.Disponivel).HasDefaultValue(true);
+                entity.Property(e => e.ImagemUrl).HasMaxLength(500);
 
                 entity.HasOne(e => e.Categoria)
                       .WithMany(c => c.Livros)

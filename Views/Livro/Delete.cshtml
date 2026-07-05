@@ -9,42 +9,53 @@
     <li>Excluir</li>
 </ul>
 
-<div class="page-header">
-    <h1>🗑️ Excluir Livro</h1>
-</div>
+<div class="delete-page">
+    <div class="delete-wrapper">
+        <div class="delete-card">
+            <div class="delete-card-top">
+                <div class="dct-circle">🗑️</div>
+                <div class="dct-title">Excluir Livro</div>
+                <div class="dct-desc">
+                    Você está prestes a excluir o livro <strong>"@Model.Titulo"</strong>.<br>
+                    Esta ação é permanente e não pode ser desfeita.
+                </div>
+            </div>
 
-<div class="card" style="max-width:600px">
-    <div class="card-header">⚠️ Confirmar Exclusão</div>
-    <div class="card-body">
-        <div class="alert alert-danger">
-            ⚠️ Tem certeza que deseja excluir o livro abaixo? Esta ação não pode ser desfeita.
+            <div class="delete-preview">
+                <div class="dp-row">
+                    <span class="dp-label">Título</span>
+                    <span class="dp-value">@Model.Titulo</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">Autor</span>
+                    <span class="dp-value">@Model.Autor</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">Ano</span>
+                    <span class="dp-value">@Model.AnoPublicacao</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">Categoria</span>
+                    <span class="dp-value">@Model.Categoria?.Nome</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">Status</span>
+                    <span class="dp-value">@(Model.Disponivel ? "✅ Disponível" : "❌ Emprestado")</span>
+                </div>
+            </div>
+
+            <div class="delete-card-warning">
+                <span>⚠️</span>
+                <span>Todo o histórico de empréstimos deste livro também será removido permanentemente.</span>
+            </div>
+
+            <form method="post" asp-action="Delete" asp-controller="Livro" asp-route-id="@Model.Id">
+                @Html.AntiForgeryToken()
+                <div class="delete-card-actions">
+                    <button type="submit" class="btn-delete-confirm">🗑️ Confirmar Exclusão</button>
+                    <a href="/Livro/Details/@Model.Id" class="btn-delete-cancel">← Cancelar e Voltar</a>
+                </div>
+            </form>
         </div>
-
-        <div class="detail-grid" style="margin-bottom:20px">
-            <div class="detail-item">
-                <label>Título</label>
-                <p>@Model.Titulo</p>
-            </div>
-            <div class="detail-item">
-                <label>Autor</label>
-                <p>@Model.Autor</p>
-            </div>
-            <div class="detail-item">
-                <label>Ano</label>
-                <p>@Model.AnoPublicacao</p>
-            </div>
-            <div class="detail-item">
-                <label>Categoria</label>
-                <p>@Model.Categoria?.Nome</p>
-            </div>
-        </div>
-
-        <form method="post" asp-action="Delete" asp-controller="Livro" asp-route-id="@Model.Id">
-            @Html.AntiForgeryToken()
-            <div class="form-actions">
-                <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
-                <a href="/Livro" class="btn btn-secondary">← Cancelar</a>
-            </div>
-        </form>
     </div>
 </div>

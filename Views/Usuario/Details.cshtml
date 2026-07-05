@@ -6,48 +6,100 @@
 <ul class="breadcrumb">
     <li><a href="/Usuario">Usuários</a></li>
     <li class="breadcrumb-separator">›</li>
-    <li>Detalhes</li>
+    <li>@Model.Nome</li>
 </ul>
 
 <div class="page-header">
-    <div>
-        <h1>👁️ Detalhes do Usuário</h1>
-    </div>
+    <div><h1>Detalhes do Usuário</h1></div>
     <div class="btn-group">
         <a href="/Usuario/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
         <a href="/Usuario" class="btn btn-secondary">← Voltar</a>
     </div>
 </div>
 
-<div class="card" style="max-width:600px">
-    <div class="card-header">
-        👤 @Model.Nome
-        @if (Model.Role == "Administrador")
-        {
-            <span class="badge badge-primary" style="margin-left:auto">👑 Administrador</span>
-        }
-        else
-        {
-            <span class="badge badge-secondary" style="margin-left:auto">👤 Funcionário</span>
-        }
+<div class="detail-page">
+    <div>
+        <div class="detail-card">
+            <div class="detail-hero">
+                <div class="hero-icon">👤</div>
+                <div>
+                    <div class="hero-title">@Model.Nome</div>
+                    <div class="hero-sub">@Model.Email</div>
+                </div>
+                @if (Model.Role == "Administrador")
+                {
+                    <span class="hero-badge admin">👑 Administrador</span>
+                }
+                else
+                {
+                    <span class="hero-badge staff">👤 Funcionário</span>
+                }
+            </div>
+            <div class="detail-fields">
+                <div class="detail-fields-grid">
+                    <div class="detail-field">
+                        <div class="df-label">Nome Completo</div>
+                        <div class="df-value">@Model.Nome</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">E-mail</div>
+                        <div class="df-value">@Model.Email</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Cargo</div>
+                        <div class="df-value">@Model.Role</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">ID do Usuário</div>
+                        <div class="df-value">#@Model.Id</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-        <div class="detail-grid">
-            <div class="detail-item">
-                <label>Nome Completo</label>
-                <p>@Model.Nome</p>
+
+    <div class="form-sidebar">
+        <div class="detail-actions-card">
+            <div class="dac-header">Ações</div>
+            <div class="dac-body">
+                <a href="/Usuario/Edit/@Model.Id" class="dac-btn warning">✏️ Editar Usuário</a>
+                <a href="/Usuario/Delete/@Model.Id" class="dac-btn danger">🗑 Excluir</a>
+                <a href="/Usuario" class="dac-btn secondary">← Voltar à Lista</a>
             </div>
-            <div class="detail-item">
-                <label>E-mail</label>
-                <p>@Model.Email</p>
-            </div>
-            <div class="detail-item">
-                <label>Cargo (Role)</label>
-                <p>@Model.Role</p>
-            </div>
-            <div class="detail-item">
-                <label>ID do Usuário</label>
-                <p>#@Model.Id</p>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">🔐 Permissões</div>
+            <div class="sidebar-card-body">
+                @if (Model.Role == "Administrador")
+                {
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Gerenciar usuários</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Gerenciar livros e categorias</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Gerenciar empréstimos</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="info-item">
+                        <span class="info-icon">❌</span>
+                        <span class="info-text">Gerenciar usuários</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Gerenciar livros e categorias</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Gerenciar empréstimos</span>
+                    </div>
+                }
             </div>
         </div>
     </div>

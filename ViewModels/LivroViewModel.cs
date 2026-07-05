@@ -32,9 +32,11 @@ namespace Biblioteca.ViewModels
 
         public IEnumerable<SelectListItem>? Categorias { get; set; }
 
-        // Search
+        // Filtros
         public string? FiltroBusca { get; set; }
         public int? FiltroCategoria { get; set; }
-        public IEnumerable<Livro>? Livros { get; set; }
+
+        // Paginação
+        public PaginatedList<Livro>? Livros { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     ViewData["Title"] = "Registrar Devolução";
     var hoje = DateTime.Now.Date;
     var atrasado = Model.DataPrevistaDevolucao.Date < hoje;
+    var diasAtraso = atrasado ? (hoje - Model.DataPrevistaDevolucao.Date).Days : 0;
 }
 
 <ul class="breadcrumb">
@@ -12,64 +13,95 @@
 </ul>
 
 <div class="page-header">
-    <h1>↩️ Registrar Devolução</h1>
+    <h1>Registrar Devolução</h1>
 </div>
 
-<div class="card" style="max-width:600px">
-    <div class="card-header">📋 Confirmação de Devolução</div>
-    <div class="card-body">
+<div class="form-page">
+    <div>
+        <div class="form-card">
+            <div class="form-card-header">
+                <div class="fch-icon green">↩️</div>
+                <div>
+                    <div class="fch-title">Confirmação de Devolução</div>
+                    <div class="fch-sub">Verifique os dados antes de confirmar</div>
+                </div>
+            </div>
+            <div class="form-card-body">
+                @if (atrasado)
+                {
+                    <div class="info-box danger">
+                        <span class="ib-icon">⚠️</span>
+                        <span>Este empréstimo está <strong>@diasAtraso dia(s) atrasado</strong>! A devolução estava prevista para <strong>@Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</strong>.</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="info-box success">
+                        <span class="ib-icon">✅</span>
+                        <span>Devolução dentro do prazo. O livro voltará a ficar <strong>disponível</strong> automaticamente.</span>
+                    </div>
+                }
 
-        @if (atrasado)
-        {
-            <div class="alert alert-danger">
-                ⚠️ Este empréstimo está <strong>atrasado</strong>!
-                Previsão era @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy") —
-                @((hoje - Model.DataPrevistaDevolucao.Date).Days) dia(s) de atraso.
+                <div class="preview-box">
+                    <div class="pb-row">
+                        <span class="pb-label">Livro</span>
+                        <span class="pb-value">@Model.Livro?.Titulo</span>
+                    </div>
+                    <div class="pb-row">
+                        <span class="pb-label">Autor</span>
+                        <span class="pb-value">@Model.Livro?.Autor</span>
+                    </div>
+                    <div class="pb-row">
+                        <span class="pb-label">Leitor</span>
+                        <span class="pb-value">@Model.NomeLeitor</span>
+                    </div>
+                    <div class="pb-row">
+                        <span class="pb-label">Data do Empréstimo</span>
+                        <span class="pb-value">@Model.DataEmprestimo.ToString("dd/MM/yyyy")</span>
+                    </div>
+                    <div class="pb-row">
+                        <span class="pb-label">Previsão de Devolução</span>
+                        <span class="pb-value" style="color:@(atrasado ? "#dc2626" : "inherit")">
+                            @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
+                            @if (atrasado) { <text> ⚠️</text> }
+                        </span>
+                    </div>
+                    <div class="pb-row">
+                        <span class="pb-label">Data de Devolução (hoje)</span>
+                        <span class="pb-value" style="color:#059669; font-weight:700">@hoje.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
             </div>
-        }
-        else
-        {
-            <div class="alert alert-info">
-                ℹ️ Confirme a devolução do livro abaixo. O livro voltará a ficar disponível automaticamente.
-            </div>
-        }
+            <form method="post" asp-action="Devolver" asp-controller="Emprestimo" asp-route-id="@Model.Id">
+                @Html.AntiForgeryToken()
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit green">✅ Confirmar Devolução</button>
+                    <a href="/Emprestimo/Details/@Model.Id" class="btn-cancel">← Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        <div class="detail-grid" style="margin:20px 0">
-            <div class="detail-item">
-                <label>Livro</label>
-                <p>@Model.Livro?.Titulo</p>
-            </div>
-            <div class="detail-item">
-                <label>Autor</label>
-                <p>@Model.Livro?.Autor</p>
-            </div>
-            <div class="detail-item">
-                <label>Leitor</label>
-                <p>@Model.NomeLeitor</p>
-            </div>
-            <div class="detail-item">
-                <label>Data do Empréstimo</label>
-                <p>@Model.DataEmprestimo.ToString("dd/MM/yyyy")</p>
-            </div>
-            <div class="detail-item">
-                <label>Previsão de Devolução</label>
-                <p style="color: @(atrasado ? "#dc3545" : "inherit")">
-                    @Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")
-                    @if (atrasado) { <text> ⚠️</text> }
-                </p>
-            </div>
-            <div class="detail-item">
-                <label>Data de Devolução (hoje)</label>
-                <p>@hoje.ToString("dd/MM/yyyy")</p>
+    <div class="form-sidebar">
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">📋 Empréstimo #@Model.Id</div>
+            <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">📅</span>
+                    <span class="info-text">Prazo: <strong>@Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</strong></span>
+                </div>
+                @if (atrasado)
+                {
+                    <div class="info-item">
+                        <span class="info-icon">⚠️</span>
+                        <span class="info-text">Atraso: <strong style="color:#dc2626">@diasAtraso dia(s)</strong></span>
+                    </div>
+                }
+                <div class="info-item">
+                    <span class="info-icon">🔓</span>
+                    <span class="info-text">O livro ficará <strong>disponível</strong> para novos empréstimos após a confirmação.</span>
+                </div>
             </div>
         </div>
-
-        <form method="post" asp-action="Devolver" asp-controller="Emprestimo" asp-route-id="@Model.Id">
-            @Html.AntiForgeryToken()
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success">✅ Confirmar Devolução</button>
-                <a href="/Emprestimo" class="btn btn-secondary">← Cancelar</a>
-            </div>
-        </form>
     </div>
 </div>

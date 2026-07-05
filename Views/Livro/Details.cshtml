@@ -6,93 +6,138 @@
 <ul class="breadcrumb">
     <li><a href="/Livro">Livros</a></li>
     <li class="breadcrumb-separator">›</li>
-    <li>Detalhes</li>
+    <li>@Model.Titulo</li>
 </ul>
 
 <div class="page-header">
     <div>
-        <h1>👁️ Detalhes do Livro</h1>
+        <h1>Detalhes do Livro</h1>
     </div>
     <div class="btn-group">
         <a href="/Livro/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
+        <a href="/Livro/Delete/@Model.Id" class="btn btn-danger">🗑 Excluir</a>
         <a href="/Livro" class="btn btn-secondary">← Voltar</a>
     </div>
 </div>
 
-<div class="card" style="max-width:700px">
-    <div class="card-header">
-        📖 @Model.Titulo
-        @if (Model.Disponivel)
-        {
-            <span class="badge badge-success" style="margin-left:auto">✓ Disponível</span>
-        }
-        else
-        {
-            <span class="badge badge-danger" style="margin-left:auto">✗ Emprestado</span>
-        }
+<div class="detail-page">
+    <div>
+        <div class="detail-card">
+            <div class="detail-hero">
+                @if (!string.IsNullOrEmpty(Model.ImagemUrl))
+                {
+                    <img src="@Model.ImagemUrl" alt="@Model.Titulo" style="height:80px; width:56px; object-fit:cover; border-radius:6px; border:2px solid rgba(255,255,255,0.3); flex-shrink:0" onerror="this.style.display='none'" />
+                }
+                else
+                {
+                    <div class="hero-icon">📖</div>
+                }
+                <div>
+                    <div class="hero-title">@Model.Titulo</div>
+                    <div class="hero-sub">@Model.Autor · @Model.AnoPublicacao</div>
+                </div>
+                @if (Model.Disponivel)
+                {
+                    <span class="hero-badge available">✓ Disponível</span>
+                }
+                else
+                {
+                    <span class="hero-badge unavailable">✗ Emprestado</span>
+                }
+            </div>
+            <div class="detail-fields">
+                <div class="detail-fields-grid">
+                    <div class="detail-field">
+                        <div class="df-label">Título</div>
+                        <div class="df-value">@Model.Titulo</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Autor</div>
+                        <div class="df-value">@Model.Autor</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Ano de Publicação</div>
+                        <div class="df-value">@Model.AnoPublicacao</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Categoria</div>
+                        <div class="df-value">
+                            <a href="/Categoria/Details/@Model.CategoriaId">@Model.Categoria?.Nome</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Emprestimos?.Any() ?? false)
+            {
+                <div class="detail-section">
+                    <div class="detail-section-title">Histórico de Empréstimos (@Model.Emprestimos.Count)</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Leitor</th>
+                                    <th>Empréstimo</th>
+                                    <th>Previsão</th>
+                                    <th>Devolvido</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emp in Model.Emprestimos.OrderByDescending(e => e.DataEmprestimo))
+                                {
+                                    <tr>
+                                        <td>@emp.NomeLeitor</td>
+                                        <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                                        <td>@emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
+                                        <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                        <td>
+                                            @if (emp.Status == "Devolvido")
+                                            { <span class="badge badge-success">Devolvido</span> }
+                                            else if (emp.Status == "Atrasado")
+                                            { <span class="badge badge-danger">Atrasado</span> }
+                                            else
+                                            { <span class="badge badge-primary">Ativo</span> }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
-    <div class="card-body">
-        <div class="detail-grid">
-            <div class="detail-item">
-                <label>Título</label>
-                <p>@Model.Titulo</p>
-            </div>
-            <div class="detail-item">
-                <label>Autor</label>
-                <p>@Model.Autor</p>
-            </div>
-            <div class="detail-item">
-                <label>Ano de Publicação</label>
-                <p>@Model.AnoPublicacao</p>
-            </div>
-            <div class="detail-item">
-                <label>Categoria</label>
-                <p>@Model.Categoria?.Nome</p>
+
+    <div class="form-sidebar">
+        <div class="detail-actions-card">
+            <div class="dac-header">Ações</div>
+            <div class="dac-body">
+                <a href="/Livro/Edit/@Model.Id" class="dac-btn warning">✏️ Editar Livro</a>
+                @if (Model.Disponivel)
+                {
+                    <a href="/Emprestimo/Create" class="dac-btn success">📋 Registrar Empréstimo</a>
+                }
+                <a href="/Livro/Delete/@Model.Id" class="dac-btn danger">🗑 Excluir Livro</a>
+                <a href="/Livro" class="dac-btn secondary">← Voltar à Lista</a>
             </div>
         </div>
-
-        @if (Model.Emprestimos?.Any() ?? false)
-        {
-            <hr style="margin:20px 0; border-color:#dee2e6" />
-            <h4 style="font-size:0.95rem; margin-bottom:12px; color:#1a3a5c">Histórico de Empréstimos</h4>
-            <div class="table-wrapper">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Leitor</th>
-                            <th>Empréstimo</th>
-                            <th>Previsão</th>
-                            <th>Devolvido em</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var emp in Model.Emprestimos.OrderByDescending(e => e.DataEmprestimo))
-                        {
-                            <tr>
-                                <td>@emp.NomeLeitor</td>
-                                <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
-                                <td>@emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
-                                <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
-                                <td>
-                                    @if (emp.Status == "Devolvido")
-                                    {
-                                        <span class="badge badge-success">Devolvido</span>
-                                    }
-                                    else if (emp.Status == "Atrasado")
-                                    {
-                                        <span class="badge badge-danger">Atrasado</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge badge-primary">Ativo</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">📊 Estatísticas</div>
+            <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">📋</span>
+                    <span class="info-text">Total de empréstimos: <strong>@(Model.Emprestimos?.Count ?? 0)</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">✅</span>
+                    <span class="info-text">Devolvidos: <strong>@(Model.Emprestimos?.Count(e => e.Status == "Devolvido") ?? 0)</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🆔</span>
+                    <span class="info-text">ID do livro: <strong>#@Model.Id</strong></span>
+                </div>
             </div>
-        }
+        </div>
     </div>
 </div>

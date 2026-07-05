@@ -16,8 +16,10 @@ namespace Biblioteca.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string? busca, int? categoriaId)
+        public IActionResult Index(string? busca, int? categoriaId, int pagina = 1)
         {
+            const int tamanhoPagina = 12;
+
             var query = _context.Livros
                 .Include(l => l.Categoria)
                 .AsQueryable();
@@ -30,7 +32,7 @@ namespace Biblioteca.Controllers
 
             var vm = new LivroViewModel
             {
-                Livros = query.OrderBy(l => l.Titulo).ToList(),
+                Livros = PaginatedList<Livro>.Criar(query.OrderBy(l => l.Titulo), pagina, tamanhoPagina),
                 FiltroBusca = busca,
                 FiltroCategoria = categoriaId,
                 Categorias = _context.Categorias

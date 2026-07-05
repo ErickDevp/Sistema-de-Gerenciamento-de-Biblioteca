@@ -11,52 +11,108 @@
 
 <div class="page-header">
     <div>
-        <h1>➕ Cadastrar Livro</h1>
-        <p>Adicione um novo livro ao acervo</p>
+        <h1>Cadastrar Livro</h1>
+        <p>Adicione um novo livro ao acervo da biblioteca</p>
     </div>
 </div>
 
-<div class="card" style="max-width:680px">
-    <div class="card-header">📖 Dados do Livro</div>
-    <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="Livro">
-            @Html.AntiForgeryToken()
-
-            <div class="form-group">
-                <label asp-for="Titulo" class="form-label">Título <span class="required">*</span></label>
-                <input asp-for="Titulo" class="form-control" placeholder="Ex: Dom Casmurro" />
-                <span asp-validation-for="Titulo" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Autor" class="form-label">Autor <span class="required">*</span></label>
-                <input asp-for="Autor" class="form-control" placeholder="Ex: Machado de Assis" />
-                <span asp-validation-for="Autor" class="field-validation-error"></span>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label asp-for="AnoPublicacao" class="form-label">Ano de Publicação <span class="required">*</span></label>
-                    <input asp-for="AnoPublicacao" class="form-control" type="number" placeholder="@DateTime.Now.Year" />
-                    <span asp-validation-for="AnoPublicacao" class="field-validation-error"></span>
+<form method="post" asp-action="Create" asp-controller="Livro">
+    @Html.AntiForgeryToken()
+    <div class="form-page">
+        <div>
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon blue">📖</div>
+                    <div>
+                        <div class="fch-title">Dados do Livro</div>
+                        <div class="fch-sub">Preencha as informações do livro</div>
+                    </div>
                 </div>
-
-                <div class="form-group">
-                    <label asp-for="CategoriaId" class="form-label">Categoria <span class="required">*</span></label>
-                    <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.Categorias">
-                        <option value="">Selecione...</option>
-                    </select>
-                    <span asp-validation-for="CategoriaId" class="field-validation-error"></span>
+                <div class="form-card-body">
+                    <div class="form-section">
+                        <div class="form-section-title">Identificação</div>
+                        <div class="field">
+                            <label asp-for="Titulo" class="field-label">Título <span class="req">*</span></label>
+                            <input asp-for="Titulo" class="field-input" placeholder="Ex: Dom Casmurro" />
+                            <span asp-validation-for="Titulo" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Autor" class="field-label">Autor <span class="req">*</span></label>
+                            <input asp-for="Autor" class="field-input" placeholder="Ex: Machado de Assis" />
+                            <span asp-validation-for="Autor" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Classificação</div>
+                        <div class="fields-row">
+                            <div class="field">
+                                <label asp-for="AnoPublicacao" class="field-label">Ano de Publicação <span class="req">*</span></label>
+                                <input asp-for="AnoPublicacao" class="field-input" type="number" placeholder="@DateTime.Now.Year" />
+                                <span asp-validation-for="AnoPublicacao" class="field-error"></span>
+                            </div>
+                            <div class="field">
+                                <label asp-for="CategoriaId" class="field-label">Categoria <span class="req">*</span></label>
+                                <select asp-for="CategoriaId" class="field-input" asp-items="ViewBag.Categorias">
+                                    <option value="">Selecione...</option>
+                                </select>
+                                <span asp-validation-for="CategoriaId" class="field-error"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Capa</div>
+                        <div class="field">
+                            <label asp-for="ImagemUrl" class="field-label">URL da Capa <span class="field-hint">(opcional)</span></label>
+                            <input asp-for="ImagemUrl" class="field-input" placeholder="https://..." id="inputImagemUrl" oninput="previewCapa(this.value)" />
+                            <span asp-validation-for="ImagemUrl" class="field-error"></span>
+                            <div class="field-desc">Cole a URL de uma imagem da capa do livro.</div>
+                        </div>
+                        <div id="capaPreview" style="display:none; margin-top:10px; text-align:center">
+                            <img id="capaImg" src="" alt="Pré-visualização" style="max-height:180px; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.15); border:1px solid #e5e7eb" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit">💾 Cadastrar Livro</button>
+                    <a href="/Livro" class="btn-cancel">← Cancelar</a>
                 </div>
             </div>
-
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">💾 Cadastrar Livro</button>
-                <a href="/Livro" class="btn btn-secondary">← Cancelar</a>
+        </div>
+        <div class="form-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">ℹ️ Informações</div>
+                <div class="sidebar-card-body">
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">O livro será cadastrado como <strong>disponível</strong> automaticamente.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🖼️</span>
+                        <span class="info-text">A URL da capa pode ser obtida em sites como <strong>Google Images</strong> ou <strong>OpenLibrary</strong>.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">🏷️</span>
+                        <span class="info-text">Selecione a <strong>categoria correta</strong> para facilitar buscas.</span>
+                    </div>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
+
+<script>
+function previewCapa(url) {
+    const preview = document.getElementById('capaPreview');
+    const img = document.getElementById('capaImg');
+    if (url && url.startsWith('http')) {
+        img.src = url;
+        preview.style.display = 'block';
+        img.onerror = () => { preview.style.display = 'none'; };
+    } else {
+        preview.style.display = 'none';
+    }
+}
+</script>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

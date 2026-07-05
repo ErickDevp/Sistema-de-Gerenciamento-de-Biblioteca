@@ -9,38 +9,45 @@
     <li>Excluir</li>
 </ul>
 
-<div class="page-header">
-    <h1>🗑️ Excluir Usuário</h1>
-</div>
+<div class="delete-page">
+    <div class="delete-wrapper">
+        <div class="delete-card">
+            <div class="delete-card-top">
+                <div class="dct-circle">👤</div>
+                <div class="dct-title">Excluir Usuário</div>
+                <div class="dct-desc">
+                    Você está prestes a excluir o usuário <strong>"@Model.Nome"</strong>.<br>
+                    Ele não poderá mais acessar o sistema após a exclusão.
+                </div>
+            </div>
 
-<div class="card" style="max-width:500px">
-    <div class="card-header">⚠️ Confirmar Exclusão</div>
-    <div class="card-body">
-        <div class="alert alert-danger">
-            ⚠️ Tem certeza que deseja excluir o usuário <strong>@Model.Nome</strong>? Esta ação não pode ser desfeita.
+            <div class="delete-preview">
+                <div class="dp-row">
+                    <span class="dp-label">Nome</span>
+                    <span class="dp-value">@Model.Nome</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">E-mail</span>
+                    <span class="dp-value">@Model.Email</span>
+                </div>
+                <div class="dp-row">
+                    <span class="dp-label">Cargo</span>
+                    <span class="dp-value">@(Model.Role == "Administrador" ? "👑 Administrador" : "👤 Funcionário")</span>
+                </div>
+            </div>
+
+            <div class="delete-card-warning">
+                <span>⚠️</span>
+                <span>Esta ação é permanente. O usuário será removido imediatamente do sistema.</span>
+            </div>
+
+            <form method="post" asp-action="Delete" asp-controller="Usuario" asp-route-id="@Model.Id">
+                @Html.AntiForgeryToken()
+                <div class="delete-card-actions">
+                    <button type="submit" class="btn-delete-confirm">🗑️ Confirmar Exclusão</button>
+                    <a href="/Usuario/Details/@Model.Id" class="btn-delete-cancel">← Cancelar e Voltar</a>
+                </div>
+            </form>
         </div>
-
-        <div class="detail-grid" style="margin-bottom:20px">
-            <div class="detail-item">
-                <label>Nome</label>
-                <p>@Model.Nome</p>
-            </div>
-            <div class="detail-item">
-                <label>E-mail</label>
-                <p>@Model.Email</p>
-            </div>
-            <div class="detail-item">
-                <label>Cargo</label>
-                <p>@Model.Role</p>
-            </div>
-        </div>
-
-        <form method="post" asp-action="Delete" asp-controller="Usuario" asp-route-id="@Model.Id">
-            @Html.AntiForgeryToken()
-            <div class="form-actions">
-                <button type="submit" class="btn btn-danger">🗑️ Confirmar Exclusão</button>
-                <a href="/Usuario" class="btn btn-secondary">← Cancelar</a>
-            </div>
-        </form>
     </div>
 </div>

@@ -1,14 +1,32 @@
 @model LivroViewModel
 @{
     ViewData["Title"] = "Livros";
+    var livros = Model.Livros!;
+
+    // Monta URL base preservando filtros
+    var urlBase = "/Livro?";
+    if (!string.IsNullOrEmpty(Model.FiltroBusca)) urlBase += $"busca={Uri.EscapeDataString(Model.FiltroBusca)}&";
+    if (Model.FiltroCategoria.HasValue) urlBase += $"categoriaId={Model.FiltroCategoria}&";
+    urlBase = urlBase.TrimEnd('&', '?');
+
+    ViewData["PaginaAtual"]     = livros.PaginaAtual;
+    ViewData["TotalPaginas"]    = livros.TotalPaginas;
+    ViewData["TotalItens"]      = livros.TotalItens;
+    ViewData["TamanhoPagina"]   = livros.TamanhoPagina;
+    ViewData["PaginasVisiveis"] = livros.PaginasVisiveis();
+    ViewData["UrlBase"]         = urlBase;
 }
 
 <div class="page-header">
     <div>
         <h1>📖 Livros</h1>
-        <p>Gerencie o acervo da biblioteca</p>
+        <p>@livros.TotalItens livro(s) no acervo</p>
     </div>
-    <a href="/Livro/Create" class="btn btn-primary">➕ Novo Livro</a>
+    <div class="btn-group">
+        <button onclick="toggleView('grid')" id="btn-grid" class="btn btn-primary">⊞ Cards</button>
+        <button onclick="toggleView('list')" id="btn-list" class="btn btn-secondary">☰ Lista</button>
+        <a href="/Livro/Create" class="btn btn-primary">➕ Novo Livro</a>
+    </div>
 </div>
 
 <!-- BUSCA -->
@@ -23,9 +41,7 @@
             <option value="">Todas as categorias</option>
             @foreach (var cat in Model.Categorias ?? Enumerable.Empty<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>())
             {
-                <option value="@cat.Value" selected="@(cat.Value == Model.FiltroCategoria?.ToString() ? "selected" : null)">
-                    @cat.Text
-                </option>
+                <option value="@cat.Value" selected="@(cat.Value == Model.FiltroCategoria?.ToString() ? "selected" : null)">@cat.Text</option>
             }
         </select>
     </div>
@@ -38,56 +54,103 @@
     </div>
 </form>
 
-<!-- TABELA -->
-<div class="card">
-    <div class="card-header">
-        📚 Acervo
-        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">
-            @(Model.Livros?.Count() ?? 0) livro(s) encontrado(s)
-        </span>
-    </div>
-    <div class="card-body" style="padding:0">
-        @if (!(Model.Livros?.Any() ?? false))
-        {
+<!-- GRID DE CARDS -->
+<div id="view-grid">
+    @if (!livros.Itens.Any())
+    {
+        <div class="card"><div class="card-body">
             <div class="empty-state">
                 <div class="empty-icon">📖</div>
                 <h3>Nenhum livro encontrado</h3>
-                <p>Cadastre o primeiro livro ou ajuste os filtros de busca.</p>
+                <p>Cadastre o primeiro livro ou ajuste os filtros.</p>
             </div>
-        }
-        else
-        {
+        </div></div>
+    }
+    else
+    {
+        <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; margin-bottom:4px">
+            @foreach (var livro in livros.Itens)
+            {
+                <div class="livro-card">
+                    <a href="/Livro/Details/@livro.Id" class="livro-card-img-link">
+                        @if (!string.IsNullOrEmpty(livro.ImagemUrl))
+                        {
+                            <img src="@livro.ImagemUrl" alt="@livro.Titulo" class="livro-capa" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                            <div class="livro-capa-placeholder" style="display:none">📖</div>
+                        }
+                        else
+                        {
+                            <div class="livro-capa-placeholder">📖</div>
+                        }
+                    </a>
+                    <div class="livro-card-body">
+                        <div class="livro-card-title">@livro.Titulo</div>
+                        <div class="livro-card-autor">@livro.Autor</div>
+                        <div class="livro-card-footer">
+                            @if (livro.Disponivel)
+                            { <span class="badge badge-success" style="font-size:0.7rem">Disponível</span> }
+                            else
+                            { <span class="badge badge-danger" style="font-size:0.7rem">Emprestado</span> }
+                        </div>
+                        <div class="livro-card-actions">
+                            <a href="/Livro/Details/@livro.Id" class="btn btn-sm btn-outline">👁</a>
+                            <a href="/Livro/Edit/@livro.Id" class="btn btn-sm btn-warning">✏️</a>
+                            <a href="/Livro/Delete/@livro.Id" class="btn btn-sm btn-danger">🗑</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        @await Html.PartialAsync("_Paginacao")
+    }
+</div>
+
+<!-- LISTA -->
+<div id="view-list" style="display:none">
+    <div class="card">
+        <div class="card-header">
+            📚 Acervo
+            <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">
+                Página @livros.PaginaAtual de @livros.TotalPaginas (@livros.TotalItens livros)
+            </span>
+        </div>
+        <div class="card-body" style="padding:0">
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th>Capa</th>
                             <th>Título</th>
                             <th>Autor</th>
                             <th>Ano</th>
                             <th>Categoria</th>
-                            <th>Disponibilidade</th>
+                            <th>Status</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var livro in Model.Livros!)
+                        @foreach (var livro in livros.Itens)
                         {
                             <tr>
-                                <td style="color:#9ca3af">@livro.Id</td>
+                                <td style="width:50px">
+                                    @if (!string.IsNullOrEmpty(livro.ImagemUrl))
+                                    {
+                                        <img src="@livro.ImagemUrl" alt="" style="height:48px; width:34px; object-fit:cover; border-radius:4px; border:1px solid #e5e7eb" onerror="this.style.display='none'" />
+                                    }
+                                    else
+                                    {
+                                        <div style="height:48px; width:34px; background:#f3f4f6; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:1.2rem">📖</div>
+                                    }
+                                </td>
                                 <td><strong>@livro.Titulo</strong></td>
                                 <td>@livro.Autor</td>
                                 <td>@livro.AnoPublicacao</td>
                                 <td><span class="badge badge-secondary">@livro.Categoria?.Nome</span></td>
                                 <td>
                                     @if (livro.Disponivel)
-                                    {
-                                        <span class="badge badge-success">✓ Disponível</span>
-                                    }
+                                    { <span class="badge badge-success">✓ Disponível</span> }
                                     else
-                                    {
-                                        <span class="badge badge-danger">✗ Emprestado</span>
-                                    }
+                                    { <span class="badge badge-danger">✗ Emprestado</span> }
                                 </td>
                                 <td>
                                     <div class="btn-group">
@@ -101,6 +164,20 @@
                     </tbody>
                 </table>
             </div>
-        }
+        </div>
+        @await Html.PartialAsync("_Paginacao")
     </div>
 </div>
+
+<script>
+function toggleView(view) {
+    document.getElementById('view-grid').style.display = view === 'grid' ? 'block' : 'none';
+    document.getElementById('view-list').style.display = view === 'list' ? 'block' : 'none';
+    document.getElementById('btn-grid').className = view === 'grid' ? 'btn btn-primary' : 'btn btn-secondary';
+    document.getElementById('btn-list').className = view === 'list' ? 'btn btn-primary' : 'btn btn-secondary';
+    localStorage.setItem('livroView', view);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    toggleView(localStorage.getItem('livroView') || 'grid');
+});
+</script>
