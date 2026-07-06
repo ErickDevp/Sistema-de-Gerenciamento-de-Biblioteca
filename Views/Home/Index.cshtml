@@ -1,6 +1,15 @@
-@model IEnumerable<Emprestimo>
+@model Biblioteca.ViewModels.DashboardViewModel
+@using System.Text.Json
 @{
     ViewData["Title"] = "Dashboard";
+
+    // Serialização segura para JavaScript (evita problemas de encoding/aspas)
+    var jsonOpts = new JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+    var mesesJson          = JsonSerializer.Serialize(Model.Meses,              jsonOpts);
+    var emprestimosMesJson = JsonSerializer.Serialize(Model.EmprestimosPorMes,  jsonOpts);
+    var devolucoesMesJson  = JsonSerializer.Serialize(Model.DevolucoesPorMes,   jsonOpts);
+    var categoriasJson     = JsonSerializer.Serialize(Model.Categorias,         jsonOpts);
+    var livrosCategJson    = JsonSerializer.Serialize(Model.LivrosPorCategoria, jsonOpts);
 }
 
 <div class="page-header">
@@ -73,6 +82,56 @@
     </div>
 }
 
+<!-- ── GRÁFICOS ─────────────────────────────────────────────────────────── -->
+<div class="dashboard-charts-grid">
+
+    <!-- Gráfico de Barras: Empréstimos x Devoluções por Mês -->
+    <div class="chart-card chart-card--wide">
+        <div class="card-header">
+            📈 Empréstimos x Devoluções por Mês
+        </div>
+        <div class="card-body">
+            @if (!Model.EmprestimosPorMes.Any(v => v > 0) && !Model.DevolucoesPorMes.Any(v => v > 0))
+            {
+                <div class="chart-empty-state">
+                    <span class="chart-empty-icon">📊</span>
+                    <p>Nenhum dado de empréstimo nos últimos 6 meses.</p>
+                </div>
+            }
+            else
+            {
+                <div class="chart-container">
+                    <canvas id="emprestimosChart" aria-label="Gráfico de empréstimos e devoluções por mês"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Gráfico Donut: Livros por Categoria -->
+    <div class="chart-card">
+        <div class="card-header">
+            🍩 Livros por Categoria
+        </div>
+        <div class="card-body">
+            @if (!Model.LivrosPorCategoria.Any(v => v > 0))
+            {
+                <div class="chart-empty-state">
+                    <span class="chart-empty-icon">🏷️</span>
+                    <p>Nenhum livro cadastrado com categoria.</p>
+                </div>
+            }
+            else
+            {
+                <div class="chart-container chart-container--donut">
+                    <canvas id="categoriasChart" aria-label="Gráfico de livros por categoria"></canvas>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+<!-- ── FIM GRÁFICOS ──────────────────────────────────────────────────────── -->
+
 <!-- EMPRÉSTIMOS RECENTES -->
 <div class="card">
     <div class="card-header">
@@ -80,7 +139,7 @@
         <a href="/Emprestimo" class="btn btn-sm btn-outline" style="margin-left:auto;">Ver todos</a>
     </div>
     <div class="card-body" style="padding:0">
-        @if (!Model.Any())
+        @if (!Model.EmprestimosRecentes.Any())
         {
             <div class="empty-state">
                 <div class="empty-icon">📋</div>
@@ -103,7 +162,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var e in Model)
+                        @foreach (var e in Model.EmprestimosRecentes)
                         {
                             <tr>
                                 <td><strong>@e.Livro?.Titulo</strong></td>
@@ -135,3 +194,134 @@
         }
     </div>
 </div>
+
+@section Scripts {
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    // ── Dados vindos do Razor (serializados de forma segura) ──────────────────
+    var meses          = @Html.Raw(mesesJson);
+    var emprestimosMes = @Html.Raw(emprestimosMesJson);
+    var devolucoesMes  = @Html.Raw(devolucoesMesJson);
+    var categorias     = @Html.Raw(categoriasJson);
+    var livrosCateg    = @Html.Raw(livrosCategJson);
+
+    // ── Paleta coerente com o visual do sistema ───────────────────────────────
+    var corEmprestimos  = 'rgba(37,  99, 168, 0.85)';   // --primary-light
+    var corDevolucoes   = 'rgba(25, 135,  84, 0.75)';   // --success
+    var corBordaEmp     = 'rgba(26,  58,  92, 1)';       // --primary
+    var corBordaDev     = 'rgba(20, 108,  67, 1)';
+
+    // Paleta de cores para o donut
+    var coresPaleta = [
+        '#2563a8', '#198754', '#f0a500', '#dc3545',
+        '#7c3aed', '#0d9488', '#ea580c', '#0284c7',
+        '#65a30d', '#9333ea'
+    ];
+
+    // ── Gráfico de Barras ─────────────────────────────────────────────────────
+    var canvasBar = document.getElementById('emprestimosChart');
+    if (canvasBar) {
+        new Chart(canvasBar, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: 'Emprestados',
+                        data: emprestimosMes,
+                        backgroundColor: corEmprestimos,
+                        borderColor: corBordaEmp,
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false
+                    },
+                    {
+                        label: 'Devolvidos',
+                        data: devolucoesMes,
+                        backgroundColor: corDevolucoes,
+                        borderColor: corBordaDev,
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { family: "'Segoe UI', Tahoma, sans-serif", size: 12 } }
+                    },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: "'Segoe UI', Tahoma, sans-serif" } }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0,
+                            font: { family: "'Segoe UI', Tahoma, sans-serif" }
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    }
+
+    // ── Gráfico Donut ─────────────────────────────────────────────────────────
+    var canvasDonut = document.getElementById('categoriasChart');
+    if (canvasDonut) {
+        var cores = categorias.map(function (_, i) {
+            return coresPaleta[i % coresPaleta.length];
+        });
+
+        new Chart(canvasDonut, {
+            type: 'doughnut',
+            data: {
+                labels: categorias,
+                datasets: [{
+                    data: livrosCateg,
+                    backgroundColor: cores,
+                    borderColor: '#fff',
+                    borderWidth: 2,
+                    hoverOffset: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: "'Segoe UI', Tahoma, sans-serif", size: 11 },
+                            padding: 14,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (ctx) {
+                                var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                                var pct = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : '0.0';
+                                return ' ' + ctx.label + ': ' + ctx.parsed + ' livro(s) (' + pct + '%)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+})();
+</script>
+}
