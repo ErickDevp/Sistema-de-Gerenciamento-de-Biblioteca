@@ -11,10 +11,9 @@ namespace Biblioteca.Models
         [Display(Name = "Livro")]
         public int LivroId { get; set; }
 
-        [Required(ErrorMessage = "O nome do leitor é obrigatório.")]
-        [StringLength(150, ErrorMessage = "O nome deve ter no máximo 150 caracteres.")]
-        [Display(Name = "Nome do Leitor")]
-        public string NomeLeitor { get; set; } = string.Empty;
+        [Required(ErrorMessage = "O leitor é obrigatório.")]
+        [Display(Name = "Leitor")]
+        public int LeitorId { get; set; }
 
         [Display(Name = "Data do Empréstimo")]
         public DateTime DataEmprestimo { get; set; } = DateTime.Now;
@@ -32,6 +31,9 @@ namespace Biblioteca.Models
         // Navigation
         [ForeignKey("LivroId")]
         public Livro? Livro { get; set; }
+
+        [ForeignKey("LeitorId")]
+        public Leitor? Leitor { get; set; }
 
         [NotMapped]
         public bool EstaAtrasado =>

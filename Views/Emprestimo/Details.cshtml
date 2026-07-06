@@ -38,7 +38,7 @@
                 <div class="hero-icon">📋</div>
                 <div>
                     <div class="hero-title">@Model.Livro?.Titulo</div>
-                    <div class="hero-sub">Leitor: @Model.NomeLeitor</div>
+                    <div class="hero-sub">Leitor: @Model.Leitor?.Nome</div>
                 </div>
                 @if (Model.Status == "Devolvido")
                 { <span class="hero-badge returned">✓ Devolvido</span> }
@@ -63,7 +63,7 @@
                     </div>
                     <div class="detail-field">
                         <div class="df-label">Leitor</div>
-                        <div class="df-value">@Model.NomeLeitor</div>
+                        <div class="df-value"><a href="/Leitor/Details/@Model.LeitorId">@Model.Leitor?.Nome</a></div>
                     </div>
                     <div class="detail-field">
                         <div class="df-label">Data do Empréstimo</div>

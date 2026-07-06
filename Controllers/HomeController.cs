@@ -22,12 +22,14 @@ namespace Biblioteca.Controllers
             ViewBag.LivrosEmprestados = _context.Livros.Count(l => !l.Disponivel);
             ViewBag.TotalCategorias = _context.Categorias.Count();
             ViewBag.TotalUsuarios = _context.Usuarios.Count();
+            ViewBag.TotalLeitores = _context.Leitores.Count(l => l.Ativo);
             ViewBag.EmprestimosAtivos = _context.Emprestimos.Count(e => e.Status == "Ativo");
             ViewBag.EmprestimosAtrasados = _context.Emprestimos
-                .Count(e => e.Status == "Ativo" && e.DataPrevistaDevolucao.Date < hoje);
+                .Count(e => e.Status == "Atrasado");
 
             var emprestimosRecentes = _context.Emprestimos
                 .Include(e => e.Livro)
+                .Include(e => e.Leitor)
                 .OrderByDescending(e => e.DataEmprestimo)
                 .Take(5)
                 .ToList();

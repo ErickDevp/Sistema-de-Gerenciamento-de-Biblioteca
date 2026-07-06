@@ -87,7 +87,7 @@
                                 @foreach (var emp in Model.Emprestimos.OrderByDescending(e => e.DataEmprestimo))
                                 {
                                     <tr>
-                                        <td>@emp.NomeLeitor</td>
+                                        <td>@emp.Leitor?.Nome</td>
                                         <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
                                         <td>@emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
                                         <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>

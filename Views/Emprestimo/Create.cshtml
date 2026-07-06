@@ -43,9 +43,14 @@
                     <div class="form-section">
                         <div class="form-section-title">Leitor</div>
                         <div class="field">
-                            <label asp-for="NomeLeitor" class="field-label">Nome do Leitor <span class="req">*</span></label>
-                            <input asp-for="NomeLeitor" class="field-input" placeholder="Nome completo do leitor" />
-                            <span asp-validation-for="NomeLeitor" class="field-error"></span>
+                            <label asp-for="LeitorId" class="field-label">Leitor <span class="req">*</span></label>
+                            <select asp-for="LeitorId" class="field-input" asp-items="Model.Leitores">
+                                <option value="">Selecione um leitor...</option>
+                            </select>
+                            <span asp-validation-for="LeitorId" class="field-error"></span>
+                            <div class="field-desc">
+                                Leitor não cadastrado? <a href="/Leitor/Create" style="color:#2563a8">Cadastrar agora →</a>
+                            </div>
                         </div>
                     </div>
                     <div class="form-section">
@@ -70,27 +75,15 @@
             <div class="sidebar-card">
                 <div class="sidebar-card-header">ℹ️ Como funciona</div>
                 <div class="sidebar-card-body">
-                    <div class="info-item">
-                        <span class="info-icon">1️⃣</span>
-                        <span class="info-text">Selecione o <strong>livro disponível</strong> que será emprestado.</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">2️⃣</span>
-                        <span class="info-text">Informe o <strong>nome completo</strong> do leitor.</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">3️⃣</span>
-                        <span class="info-text">Defina a <strong>data de devolução</strong> prevista.</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">🔒</span>
-                        <span class="info-text">O livro será marcado como <strong>indisponível</strong> automaticamente.</span>
-                    </div>
+                    <div class="info-item"><span class="info-icon">1️⃣</span><span class="info-text">Selecione o <strong>livro disponível</strong>.</span></div>
+                    <div class="info-item"><span class="info-icon">2️⃣</span><span class="info-text">Selecione o <strong>leitor cadastrado</strong>.</span></div>
+                    <div class="info-item"><span class="info-icon">3️⃣</span><span class="info-text">Defina a <strong>data de devolução</strong>.</span></div>
+                    <div class="info-item"><span class="info-icon">🔒</span><span class="info-text">O livro ficará <strong>indisponível</strong> automaticamente.</span></div>
                 </div>
             </div>
             <div class="info-box info">
-                <span class="ib-icon">📅</span>
-                <span>Empréstimos não devolvidos até a data prevista serão automaticamente marcados como <strong>atrasados</strong>.</span>
+                <span class="ib-icon">👤</span>
+                <span>Só leitores <strong>ativos</strong> aparecem na lista.</span>
             </div>
         </div>
     </div>
