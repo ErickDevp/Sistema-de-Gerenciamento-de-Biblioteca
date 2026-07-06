@@ -90,7 +90,7 @@
                             <tr>
                                 <td style="color:#9ca3af; font-size:0.8rem">@emp.Id</td>
                                 <td><strong>@emp.Livro?.Titulo</strong></td>
-                                <td>@emp.NomeLeitor</td>
+                                <td><a href="/Leitor/Details/@emp.LeitorId" style="color:#2563a8">@emp.Leitor?.Nome</a></td>
                                 <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")

@@ -12,12 +12,12 @@ namespace Biblioteca.Data
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Livro> Livros { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
+        public DbSet<Leitor> Leitores { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Usuario
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -28,14 +28,12 @@ namespace Biblioteca.Data
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(20);
             });
 
-            // Categoria
             modelBuilder.Entity<Categoria>(entity =>
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
             });
 
-            // Livro
             modelBuilder.Entity<Livro>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -50,16 +48,32 @@ namespace Biblioteca.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Emprestimo
+            modelBuilder.Entity<Leitor>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Cpf).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+                entity.Property(e => e.Nome).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Cpf).IsRequired().HasMaxLength(14);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
+                entity.Property(e => e.Telefone).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Endereco).HasMaxLength(200);
+                entity.Property(e => e.Ativo).HasDefaultValue(true);
+            });
+
             modelBuilder.Entity<Emprestimo>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.NomeLeitor).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(20);
 
                 entity.HasOne(e => e.Livro)
                       .WithMany(l => l.Emprestimos)
                       .HasForeignKey(e => e.LivroId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Leitor)
+                      .WithMany(l => l.Emprestimos)
+                      .HasForeignKey(e => e.LeitorId)
                       .OnDelete(DeleteBehavior.Restrict);
             });
         }

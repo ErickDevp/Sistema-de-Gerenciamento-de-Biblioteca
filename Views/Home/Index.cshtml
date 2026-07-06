@@ -49,7 +49,14 @@
         </div>
     </div>
     <div class="stat-card">
-        <div class="stat-icon teal">👥</div>
+        <div class="stat-icon teal">👤</div>
+        <div class="stat-info">
+            <div class="stat-value">@ViewBag.TotalLeitores</div>
+            <div class="stat-label">Leitores Ativos</div>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon purple">👥</div>
         <div class="stat-info">
             <div class="stat-value">@ViewBag.TotalUsuarios</div>
             <div class="stat-label">Usuários</div>
@@ -100,7 +107,7 @@
                         {
                             <tr>
                                 <td><strong>@e.Livro?.Titulo</strong></td>
-                                <td>@e.NomeLeitor</td>
+                                <td><a href="/Leitor/Details/@e.LeitorId" style="color:#2563a8">@e.Leitor?.Nome</a></td>
                                 <td>@e.DataEmprestimo.ToString("dd/MM/yyyy")</td>
                                 <td>@e.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
                                 <td>

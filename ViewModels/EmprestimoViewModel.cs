@@ -12,10 +12,9 @@ namespace Biblioteca.ViewModels
         [Display(Name = "Livro")]
         public int LivroId { get; set; }
 
-        [Required(ErrorMessage = "O nome do leitor é obrigatório.")]
-        [StringLength(150)]
-        [Display(Name = "Nome do Leitor")]
-        public string NomeLeitor { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Selecione um leitor.")]
+        [Display(Name = "Leitor")]
+        public int LeitorId { get; set; }
 
         [Required(ErrorMessage = "A data prevista de devolução é obrigatória.")]
         [DataType(DataType.Date)]
@@ -23,5 +22,6 @@ namespace Biblioteca.ViewModels
         public DateTime DataPrevistaDevolucao { get; set; } = DateTime.Now.AddDays(14);
 
         public IEnumerable<SelectListItem>? LivrosDisponiveis { get; set; }
+        public IEnumerable<SelectListItem>? Leitores { get; set; }
     }
 }

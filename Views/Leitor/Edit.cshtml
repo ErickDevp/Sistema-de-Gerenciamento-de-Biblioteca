@@ -1,0 +1,103 @@
+@model Leitor
+@{
+    ViewData["Title"] = "Editar Leitor";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Leitor">Leitores</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Editar</li>
+</ul>
+
+<div class="page-header">
+    <h1>Editar Leitor</h1>
+</div>
+
+<form method="post" asp-action="Edit" asp-controller="Leitor" asp-route-id="@Model.Id">
+    @Html.AntiForgeryToken()
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="DataCadastro" type="hidden" />
+    <div class="form-page">
+        <div>
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon blue">👤</div>
+                    <div>
+                        <div class="fch-title">@Model.Nome</div>
+                        <div class="fch-sub">Editando dados do leitor</div>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <div class="form-section">
+                        <div class="form-section-title">Identificação</div>
+                        <div class="field">
+                            <label asp-for="Nome" class="field-label">Nome Completo <span class="req">*</span></label>
+                            <input asp-for="Nome" class="field-input" />
+                            <span asp-validation-for="Nome" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Cpf" class="field-label">CPF <span class="req">*</span></label>
+                            <input asp-for="Cpf" class="field-input" maxlength="14" />
+                            <span asp-validation-for="Cpf" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Contato</div>
+                        <div class="field">
+                            <label asp-for="Email" class="field-label">E-mail <span class="req">*</span></label>
+                            <input asp-for="Email" class="field-input" type="email" />
+                            <span asp-validation-for="Email" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Telefone" class="field-label">Telefone <span class="req">*</span></label>
+                            <input asp-for="Telefone" class="field-input" maxlength="15" />
+                            <span asp-validation-for="Telefone" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Endereco" class="field-label">Endereço</label>
+                            <input asp-for="Endereco" class="field-input" />
+                            <span asp-validation-for="Endereco" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Status</div>
+                        <div class="field">
+                            <label asp-for="Ativo" class="field-label">Situação</label>
+                            <select asp-for="Ativo" class="field-input">
+                                <option value="true">✅ Ativo</option>
+                                <option value="false">❌ Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit">💾 Salvar Alterações</button>
+                    <a href="/Leitor/Details/@Model.Id" class="btn-cancel">← Cancelar</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">📋 Registro</div>
+                <div class="sidebar-card-body">
+                    <div class="info-item">
+                        <span class="info-icon">🆔</span>
+                        <span class="info-text">ID: <strong>#@Model.Id</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <span class="info-text">Cadastro: <strong>@Model.DataCadastro.ToString("dd/MM/yyyy")</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">@(Model.Ativo ? "✅" : "❌")</span>
+                        <span class="info-text">Status: <strong>@(Model.Ativo ? "Ativo" : "Inativo")</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

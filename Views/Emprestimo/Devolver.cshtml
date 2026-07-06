@@ -53,7 +53,7 @@
                     </div>
                     <div class="pb-row">
                         <span class="pb-label">Leitor</span>
-                        <span class="pb-value">@Model.NomeLeitor</span>
+                        <span class="pb-value">@Model.Leitor?.Nome</span>
                     </div>
                     <div class="pb-row">
                         <span class="pb-label">Data do Empréstimo</span>
@@ -86,6 +86,10 @@
         <div class="sidebar-card">
             <div class="sidebar-card-header">📋 Empréstimo #@Model.Id</div>
             <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">👤</span>
+                    <span class="info-text">Leitor: <strong>@Model.Leitor?.Nome</strong></span>
+                </div>
                 <div class="info-item">
                     <span class="info-icon">📅</span>
                     <span class="info-text">Prazo: <strong>@Model.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</strong></span>

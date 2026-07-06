@@ -1,0 +1,167 @@
+@model Leitor
+@{
+    ViewData["Title"] = "Detalhes do Leitor";
+    var empAtivos = Model.Emprestimos.Count(e => e.Status == "Ativo");
+    var empAtrasados = Model.Emprestimos.Count(e => e.Status == "Atrasado");
+    var empDevolvidos = Model.Emprestimos.Count(e => e.Status == "Devolvido");
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Leitor">Leitores</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>@Model.Nome</li>
+</ul>
+
+<div class="page-header">
+    <div><h1>Detalhes do Leitor</h1></div>
+    <div class="btn-group">
+        <a href="/Leitor/Edit/@Model.Id" class="btn btn-warning">✏️ Editar</a>
+        <a href="/Emprestimo/Create?leitorId=@Model.Id" class="btn btn-primary">📋 Novo Empréstimo</a>
+        <a href="/Leitor" class="btn btn-secondary">← Voltar</a>
+    </div>
+</div>
+
+@if (empAtrasados > 0)
+{
+    <div class="alert alert-danger" data-auto-dismiss>
+        ⚠️ Este leitor possui <strong>@empAtrasados empréstimo(s) atrasado(s)</strong>!
+    </div>
+}
+
+<div class="detail-page">
+    <div>
+        <div class="detail-card">
+            <div class="detail-hero">
+                <div class="hero-icon">👤</div>
+                <div>
+                    <div class="hero-title">@Model.Nome</div>
+                    <div class="hero-sub">CPF: @Model.Cpf · Desde @Model.DataCadastro.ToString("MM/yyyy")</div>
+                </div>
+                @if (Model.Ativo)
+                { <span class="hero-badge available">✅ Ativo</span> }
+                else
+                { <span class="hero-badge unavailable">❌ Inativo</span> }
+            </div>
+
+            <div class="detail-fields">
+                <div class="detail-fields-grid">
+                    <div class="detail-field">
+                        <div class="df-label">Nome Completo</div>
+                        <div class="df-value">@Model.Nome</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">CPF</div>
+                        <div class="df-value" style="font-family:monospace">@Model.Cpf</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">E-mail</div>
+                        <div class="df-value">@Model.Email</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="df-label">Telefone</div>
+                        <div class="df-value">@Model.Telefone</div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Endereco))
+                    {
+                        <div class="detail-field" style="grid-column: span 2">
+                            <div class="df-label">Endereço</div>
+                            <div class="df-value">@Model.Endereco</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.Emprestimos.Any())
+            {
+                <div class="detail-section">
+                    <div class="detail-section-title">Histórico de Empréstimos (@Model.Emprestimos.Count)</div>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Livro</th>
+                                    <th>Empréstimo</th>
+                                    <th>Previsão</th>
+                                    <th>Devolvido</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emp in Model.Emprestimos.OrderByDescending(e => e.DataEmprestimo))
+                                {
+                                    <tr>
+                                        <td><strong>@emp.Livro?.Titulo</strong></td>
+                                        <td>@emp.DataEmprestimo.ToString("dd/MM/yyyy")</td>
+                                        <td>@emp.DataPrevistaDevolucao.ToString("dd/MM/yyyy")</td>
+                                        <td>@(emp.DataDevolucao?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                        <td>
+                                            @if (emp.Status == "Devolvido")
+                                            { <span class="badge badge-success">Devolvido</span> }
+                                            else if (emp.Status == "Atrasado")
+                                            { <span class="badge badge-danger">⚠ Atrasado</span> }
+                                            else
+                                            { <span class="badge badge-primary">Ativo</span> }
+                                        </td>
+                                        <td>
+                                            <a href="/Emprestimo/Details/@emp.Id" class="btn btn-sm btn-outline">👁</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="detail-fields">
+                    <div class="empty-state" style="padding:24px">
+                        <div class="empty-icon">📋</div>
+                        <h3>Nenhum empréstimo registrado</h3>
+                        <p>Este leitor ainda não realizou empréstimos.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="form-sidebar">
+        <div class="detail-actions-card">
+            <div class="dac-header">Ações</div>
+            <div class="dac-body">
+                @if (Model.Ativo)
+                {
+                    <a href="/Emprestimo/Create?leitorId=@Model.Id" class="dac-btn primary">📋 Novo Empréstimo</a>
+                }
+                <a href="/Leitor/Edit/@Model.Id" class="dac-btn warning">✏️ Editar Leitor</a>
+                <a href="/Leitor/Delete/@Model.Id" class="dac-btn danger">🗑 Excluir</a>
+                <a href="/Leitor" class="dac-btn secondary">← Voltar à Lista</a>
+            </div>
+        </div>
+        <div class="sidebar-card">
+            <div class="sidebar-card-header">📊 Estatísticas</div>
+            <div class="sidebar-card-body">
+                <div class="info-item">
+                    <span class="info-icon">📋</span>
+                    <span class="info-text">Total: <strong>@Model.Emprestimos.Count empréstimo(s)</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">🔵</span>
+                    <span class="info-text">Ativos: <strong>@empAtivos</strong></span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">✅</span>
+                    <span class="info-text">Devolvidos: <strong>@empDevolvidos</strong></span>
+                </div>
+                @if (empAtrasados > 0)
+                {
+                    <div class="info-item">
+                        <span class="info-icon">⚠️</span>
+                        <span class="info-text" style="color:#dc2626">Atrasados: <strong>@empAtrasados</strong></span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

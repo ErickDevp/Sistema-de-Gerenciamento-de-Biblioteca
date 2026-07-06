@@ -1,0 +1,122 @@
+@model Biblioteca.ViewModels.PaginatedList<Leitor>
+@{
+    ViewData["Title"] = "Leitores";
+    var busca = (string?)ViewBag.Busca ?? "";
+    var filtroStatus = (string?)ViewBag.FiltroStatus ?? "";
+
+    string UrlBase()
+    {
+        var p = new List<string>();
+        if (!string.IsNullOrEmpty(busca)) p.Add($"busca={Uri.EscapeDataString(busca)}");
+        if (!string.IsNullOrEmpty(filtroStatus)) p.Add($"filtroStatus={filtroStatus}");
+        return "/Leitor" + (p.Any() ? "?" + string.Join("&", p) : "");
+    }
+
+    ViewData["PaginaAtual"]     = Model.PaginaAtual;
+    ViewData["TotalPaginas"]    = Model.TotalPaginas;
+    ViewData["TotalItens"]      = Model.TotalItens;
+    ViewData["TamanhoPagina"]   = Model.TamanhoPagina;
+    ViewData["PaginasVisiveis"] = Model.PaginasVisiveis();
+    ViewData["UrlBase"]         = UrlBase();
+}
+
+<div class="page-header">
+    <div>
+        <h1>👤 Leitores</h1>
+        <p>@Model.TotalItens leitor(es) cadastrado(s)</p>
+    </div>
+    <a href="/Leitor/Create" class="btn btn-primary">➕ Novo Leitor</a>
+</div>
+
+<form method="get" action="/Leitor" class="search-bar">
+    <div class="form-group">
+        <label class="form-label">Buscar por nome, CPF ou e-mail</label>
+        <input type="text" name="busca" value="@busca" class="form-control" placeholder="Digite para buscar..." />
+    </div>
+    <div class="form-group">
+        <label class="form-label">Status</label>
+        <select name="filtroStatus" class="form-control">
+            <option value="">Todos</option>
+            <option value="ativo" selected="@(filtroStatus == "ativo" ? "selected" : null)">✅ Ativos</option>
+            <option value="inativo" selected="@(filtroStatus == "inativo" ? "selected" : null)">❌ Inativos</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">&nbsp;</label>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-primary">🔍 Buscar</button>
+            <a href="/Leitor" class="btn btn-secondary">✕ Limpar</a>
+        </div>
+    </div>
+</form>
+
+<div class="card">
+    <div class="card-header">
+        👤 Lista de Leitores
+        <span style="margin-left:auto; font-size:0.8rem; font-weight:400; color:#6c757d;">
+            Página @Model.PaginaAtual de @Model.TotalPaginas
+        </span>
+    </div>
+    <div class="card-body" style="padding:0">
+        @if (!Model.Itens.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-icon">👤</div>
+                <h3>Nenhum leitor encontrado</h3>
+                <p>Cadastre o primeiro leitor clicando em "Novo Leitor".</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>E-mail</th>
+                            <th>Telefone</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var leitor in Model.Itens)
+                        {
+                            <tr>
+                                <td>
+                                    <div style="display:flex; align-items:center; gap:10px">
+                                        <div style="width:34px; height:34px; border-radius:50%; background:#1a3a5c; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; flex-shrink:0">
+                                            @leitor.Nome.Substring(0,1).ToUpper()
+                                        </div>
+                                        <div>
+                                            <strong>@leitor.Nome</strong>
+                                            <div style="font-size:0.75rem; color:#6b7280">desde @leitor.DataCadastro.ToString("MM/yyyy")</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="font-family:monospace; font-size:0.85rem">@leitor.Cpf</td>
+                                <td>@leitor.Email</td>
+                                <td>@leitor.Telefone</td>
+                                <td>
+                                    @if (leitor.Ativo)
+                                    { <span class="badge badge-success">✅ Ativo</span> }
+                                    else
+                                    { <span class="badge badge-secondary">❌ Inativo</span> }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/Leitor/Details/@leitor.Id" class="btn btn-sm btn-outline">👁</a>
+                                        <a href="/Leitor/Edit/@leitor.Id" class="btn btn-sm btn-warning">✏️</a>
+                                        <a href="/Leitor/Delete/@leitor.Id" class="btn btn-sm btn-danger">🗑</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @await Html.PartialAsync("_Paginacao")
+        }
+    </div>
+</div>

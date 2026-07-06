@@ -1,0 +1,57 @@
+@model Leitor
+@{
+    ViewData["Title"] = "Excluir Leitor";
+    var temAtivos = Model.Emprestimos.Any(e => e.Status == "Ativo" || e.Status == "Atrasado");
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Leitor">Leitores</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Excluir</li>
+</ul>
+
+<div class="delete-page">
+    <div class="delete-wrapper">
+        <div class="delete-card">
+            @if (temAtivos)
+            {
+                <div class="delete-card-top">
+                    <div class="dct-circle" style="background:#fef3c7">🚫</div>
+                    <div class="dct-title">Não é possível excluir</div>
+                    <div class="dct-desc">O leitor <strong>"@Model.Nome"</strong> possui empréstimos ativos ou atrasados e não pode ser excluído.</div>
+                </div>
+                <div class="delete-preview">
+                    <div class="dp-row"><span class="dp-label">Nome</span><span class="dp-value">@Model.Nome</span></div>
+                    <div class="dp-row"><span class="dp-label">Empréstimos ativos/atrasados</span><span class="dp-value" style="color:#dc2626">@Model.Emprestimos.Count(e => e.Status == "Ativo" || e.Status == "Atrasado")</span></div>
+                </div>
+                <div class="delete-card-warning"><span>💡</span><span>Registre a devolução de todos os empréstimos pendentes antes de excluir o leitor.</span></div>
+                <div class="delete-card-actions">
+                    <a href="/Leitor/Details/@Model.Id" class="btn-delete-confirm" style="background:#d97706; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:8px">👁 Ver Detalhes do Leitor</a>
+                    <a href="/Leitor" class="btn-delete-cancel">← Voltar à Lista</a>
+                </div>
+            }
+            else
+            {
+                <div class="delete-card-top">
+                    <div class="dct-circle">👤</div>
+                    <div class="dct-title">Excluir Leitor</div>
+                    <div class="dct-desc">Você está prestes a excluir o leitor <strong>"@Model.Nome"</strong>. Todo o histórico de empréstimos será removido.</div>
+                </div>
+                <div class="delete-preview">
+                    <div class="dp-row"><span class="dp-label">Nome</span><span class="dp-value">@Model.Nome</span></div>
+                    <div class="dp-row"><span class="dp-label">CPF</span><span class="dp-value" style="font-family:monospace">@Model.Cpf</span></div>
+                    <div class="dp-row"><span class="dp-label">E-mail</span><span class="dp-value">@Model.Email</span></div>
+                    <div class="dp-row"><span class="dp-label">Total de empréstimos</span><span class="dp-value">@Model.Emprestimos.Count</span></div>
+                </div>
+                <div class="delete-card-warning"><span>⚠️</span><span>Esta ação é permanente e não pode ser desfeita.</span></div>
+                <form method="post" asp-action="Delete" asp-controller="Leitor" asp-route-id="@Model.Id">
+                    @Html.AntiForgeryToken()
+                    <div class="delete-card-actions">
+                        <button type="submit" class="btn-delete-confirm">🗑️ Confirmar Exclusão</button>
+                        <a href="/Leitor/Details/@Model.Id" class="btn-delete-cancel">← Cancelar e Voltar</a>
+                    </div>
+                </form>
+            }
+        </div>
+    </div>
+</div>

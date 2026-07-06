@@ -21,19 +21,16 @@ namespace Biblioteca.Controllers
             const int tamanhoPagina = 10;
             var hoje = DateTime.Now.Date;
 
-            // Atualiza status de atrasados
             var atrasados = _context.Emprestimos
                 .Where(e => e.Status == "Ativo" && e.DataPrevistaDevolucao.Date < hoje)
                 .ToList();
 
-            foreach (var e in atrasados)
-                e.Status = "Atrasado";
-
-            if (atrasados.Any())
-                _context.SaveChanges();
+            foreach (var e in atrasados) e.Status = "Atrasado";
+            if (atrasados.Any()) _context.SaveChanges();
 
             var query = _context.Emprestimos
                 .Include(e => e.Livro)
+                .Include(e => e.Leitor)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(filtroStatus))
@@ -51,8 +48,8 @@ namespace Biblioteca.Controllers
         public IActionResult Details(int id)
         {
             var emprestimo = _context.Emprestimos
-                .Include(e => e.Livro)
-                .ThenInclude(l => l!.Categoria)
+                .Include(e => e.Livro).ThenInclude(l => l!.Categoria)
+                .Include(e => e.Leitor)
                 .FirstOrDefault(e => e.Id == id);
 
             if (emprestimo == null) return NotFound();
@@ -60,18 +57,27 @@ namespace Biblioteca.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(int? leitorId)
         {
             var vm = new EmprestimoViewModel
             {
                 DataPrevistaDevolucao = DateTime.Now.AddDays(14),
+                LeitorId = leitorId ?? 0,
                 LivrosDisponiveis = _context.Livros
                     .Where(l => l.Disponivel)
                     .OrderBy(l => l.Titulo)
                     .Select(l => new SelectListItem
                     {
                         Value = l.Id.ToString(),
-                        Text = $"{l.Titulo} - {l.Autor}"
+                        Text = $"{l.Titulo} — {l.Autor}"
+                    }).ToList(),
+                Leitores = _context.Leitores
+                    .Where(l => l.Ativo)
+                    .OrderBy(l => l.Nome)
+                    .Select(l => new SelectListItem
+                    {
+                        Value = l.Id.ToString(),
+                        Text = $"{l.Nome} — {l.Cpf}"
                     }).ToList()
             };
             return View(vm);
@@ -87,30 +93,27 @@ namespace Biblioteca.Controllers
             if (!ModelState.IsValid)
             {
                 vm.LivrosDisponiveis = _context.Livros
-                    .Where(l => l.Disponivel)
-                    .OrderBy(l => l.Titulo)
-                    .Select(l => new SelectListItem
-                    {
-                        Value = l.Id.ToString(),
-                        Text = $"{l.Titulo} - {l.Autor}"
-                    }).ToList();
+                    .Where(l => l.Disponivel).OrderBy(l => l.Titulo)
+                    .Select(l => new SelectListItem { Value = l.Id.ToString(), Text = $"{l.Titulo} — {l.Autor}" }).ToList();
+                vm.Leitores = _context.Leitores
+                    .Where(l => l.Ativo).OrderBy(l => l.Nome)
+                    .Select(l => new SelectListItem { Value = l.Id.ToString(), Text = $"{l.Nome} — {l.Cpf}" }).ToList();
                 return View(vm);
             }
 
             var livro = _context.Livros.Find(vm.LivroId);
             if (livro == null || !livro.Disponivel)
             {
-                TempData["Erro"] = "O livro selecionado não está disponível para empréstimo.";
+                TempData["Erro"] = "O livro selecionado não está disponível.";
                 return RedirectToAction(nameof(Create));
             }
 
-            // RN08 - marca como indisponível
             livro.Disponivel = false;
 
             var emprestimo = new Emprestimo
             {
                 LivroId = vm.LivroId,
-                NomeLeitor = vm.NomeLeitor,
+                LeitorId = vm.LeitorId,
                 DataEmprestimo = DateTime.Now,
                 DataPrevistaDevolucao = vm.DataPrevistaDevolucao,
                 Status = "Ativo"
@@ -127,6 +130,7 @@ namespace Biblioteca.Controllers
         {
             var emprestimo = _context.Emprestimos
                 .Include(e => e.Livro)
+                .Include(e => e.Leitor)
                 .FirstOrDefault(e => e.Id == id);
 
             if (emprestimo == null) return NotFound();
@@ -150,7 +154,6 @@ namespace Biblioteca.Controllers
 
             if (emprestimo == null) return NotFound();
 
-            // RN05 - devolução
             emprestimo.DataDevolucao = DateTime.Now;
             emprestimo.Status = "Devolvido";
 

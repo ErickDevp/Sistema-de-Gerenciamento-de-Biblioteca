@@ -1,0 +1,113 @@
+@model Leitor
+@{
+    ViewData["Title"] = "Novo Leitor";
+}
+
+<ul class="breadcrumb">
+    <li><a href="/Leitor">Leitores</a></li>
+    <li class="breadcrumb-separator">›</li>
+    <li>Cadastrar</li>
+</ul>
+
+<div class="page-header">
+    <div>
+        <h1>Novo Leitor</h1>
+        <p>Cadastre um novo leitor na biblioteca</p>
+    </div>
+</div>
+
+<form method="post" asp-action="Create" asp-controller="Leitor">
+    @Html.AntiForgeryToken()
+    <div class="form-page">
+        <div>
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon blue">👤</div>
+                    <div>
+                        <div class="fch-title">Dados do Leitor</div>
+                        <div class="fch-sub">Preencha as informações do leitor</div>
+                    </div>
+                </div>
+                <div class="form-card-body">
+                    <div class="form-section">
+                        <div class="form-section-title">Identificação</div>
+                        <div class="field">
+                            <label asp-for="Nome" class="field-label">Nome Completo <span class="req">*</span></label>
+                            <input asp-for="Nome" class="field-input" placeholder="Nome completo do leitor" />
+                            <span asp-validation-for="Nome" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Cpf" class="field-label">CPF <span class="req">*</span></label>
+                            <input asp-for="Cpf" class="field-input" placeholder="000.000.000-00" id="cpfInput" maxlength="14" />
+                            <span asp-validation-for="Cpf" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Contato</div>
+                        <div class="field">
+                            <label asp-for="Email" class="field-label">E-mail <span class="req">*</span></label>
+                            <input asp-for="Email" class="field-input" type="email" placeholder="email@exemplo.com" />
+                            <span asp-validation-for="Email" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Telefone" class="field-label">Telefone <span class="req">*</span></label>
+                            <input asp-for="Telefone" class="field-input" placeholder="(00) 00000-0000" id="telInput" maxlength="15" />
+                            <span asp-validation-for="Telefone" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Endereco" class="field-label">Endereço <span class="field-hint">(opcional)</span></label>
+                            <input asp-for="Endereco" class="field-input" placeholder="Rua, número - Cidade/UF" />
+                            <span asp-validation-for="Endereco" class="field-error"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-footer">
+                    <button type="submit" class="btn-submit">💾 Cadastrar Leitor</button>
+                    <a href="/Leitor" class="btn-cancel">← Cancelar</a>
+                </div>
+            </div>
+        </div>
+        <div class="form-sidebar">
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">ℹ️ Informações</div>
+                <div class="sidebar-card-body">
+                    <div class="info-item">
+                        <span class="info-icon">🆔</span>
+                        <span class="info-text">O <strong>CPF</strong> é único por leitor e não pode ser repetido.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📧</span>
+                        <span class="info-text">O <strong>e-mail</strong> também deve ser único no sistema.</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">O leitor será cadastrado como <strong>ativo</strong> automaticamente.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+document.getElementById('cpfInput').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d+)/, '$1.$2.$3');
+    else if (v.length > 3) v = v.replace(/(\d{3})(\d+)/, '$1.$2');
+    e.target.value = v;
+});
+document.getElementById('telInput').addEventListener('input', function(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 10) v = v.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    else if (v.length > 6) v = v.replace(/(\d{2})(\d{4})(\d+)/, '($1) $2-$3');
+    else if (v.length > 2) v = v.replace(/(\d{2})(\d+)/, '($1) $2');
+    e.target.value = v;
+});
+</script>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
