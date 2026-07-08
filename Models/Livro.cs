@@ -26,9 +26,6 @@ namespace Biblioteca.Models
         [Display(Name = "Categoria")]
         public int CategoriaId { get; set; }
 
-        [Display(Name = "Disponível")]
-        public bool Disponivel { get; set; } = true;
-
         [StringLength(500)]
         [Display(Name = "URL da Capa")]
         public string? ImagemUrl { get; set; }
@@ -37,6 +34,11 @@ namespace Biblioteca.Models
         [ForeignKey("CategoriaId")]
         public Categoria? Categoria { get; set; }
 
-        public ICollection<Emprestimo> Emprestimos { get; set; } = new List<Emprestimo>();
+        public ICollection<Exemplar> Exemplares { get; set; } = new List<Exemplar>();
+
+        // Computed
+        public int TotalExemplares => Exemplares.Count;
+        public int ExemplaresDisponiveis => Exemplares.Count(e => e.Disponivel);
+        public bool Disponivel => Exemplares.Any(e => e.Disponivel);
     }
 }

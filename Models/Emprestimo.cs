@@ -11,6 +11,10 @@ namespace Biblioteca.Models
         [Display(Name = "Livro")]
         public int LivroId { get; set; }
 
+        [Required(ErrorMessage = "O exemplar é obrigatório.")]
+        [Display(Name = "Exemplar")]
+        public int ExemplarId { get; set; }
+
         [Required(ErrorMessage = "O leitor é obrigatório.")]
         [Display(Name = "Leitor")]
         public int LeitorId { get; set; }
@@ -31,6 +35,9 @@ namespace Biblioteca.Models
         // Navigation
         [ForeignKey("LivroId")]
         public Livro? Livro { get; set; }
+
+        [ForeignKey("ExemplarId")]
+        public Exemplar? Exemplar { get; set; }
 
         [ForeignKey("LeitorId")]
         public Leitor? Leitor { get; set; }

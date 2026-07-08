@@ -87,10 +87,11 @@
                         <div class="livro-card-title">@livro.Titulo</div>
                         <div class="livro-card-autor">@livro.Autor</div>
                         <div class="livro-card-footer">
-                            @if (livro.Disponivel)
-                            { <span class="badge badge-success" style="font-size:0.7rem">Disponível</span> }
+                            @{ var disp = livro.Exemplares.Count(e => e.Disponivel); var tot = livro.Exemplares.Count; }
+                            @if (disp > 0)
+                            { <span class="badge badge-success" style="font-size:0.7rem">@disp/@tot disponível/eis</span> }
                             else
-                            { <span class="badge badge-danger" style="font-size:0.7rem">Emprestado</span> }
+                            { <span class="badge badge-danger" style="font-size:0.7rem">0/@tot disponíveis</span> }
                         </div>
                         <div class="livro-card-actions">
                             <a href="/Livro/Details/@livro.Id" class="btn btn-sm btn-outline">👁</a>
@@ -147,10 +148,11 @@
                                 <td>@livro.AnoPublicacao</td>
                                 <td><span class="badge badge-secondary">@livro.Categoria?.Nome</span></td>
                                 <td>
-                                    @if (livro.Disponivel)
-                                    { <span class="badge badge-success">✓ Disponível</span> }
+                                    @{ var dL = livro.Exemplares.Count(e => e.Disponivel); var tL = livro.Exemplares.Count; }
+                                    @if (dL > 0)
+                                    { <span class="badge badge-success">@dL/@tL disp.</span> }
                                     else
-                                    { <span class="badge badge-danger">✗ Emprestado</span> }
+                                    { <span class="badge badge-danger">0/@tL disp.</span> }
                                 </td>
                                 <td>
                                     <div class="btn-group">

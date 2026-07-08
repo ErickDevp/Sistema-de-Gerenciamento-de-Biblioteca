@@ -1,6 +1,8 @@
 @model Livro
 @{
     ViewData["Title"] = "Editar Livro";
+    var disponiveis = Model.Exemplares.Count(e => e.Disponivel);
+    var total = Model.Exemplares.Count;
 }
 
 <ul class="breadcrumb">
@@ -20,7 +22,9 @@
     @Html.AntiForgeryToken()
     <input asp-for="Id" type="hidden" />
     <div class="form-page">
-        <div>
+        <div style="display:flex; flex-direction:column; gap:16px">
+
+            <!-- DADOS DO LIVRO -->
             <div class="form-card">
                 <div class="form-card-header">
                     <div class="fch-icon blue">📖</div>
@@ -59,13 +63,6 @@
                                 <span asp-validation-for="CategoriaId" class="field-error"></span>
                             </div>
                         </div>
-                        <div class="field">
-                            <label asp-for="Disponivel" class="field-label">Disponibilidade</label>
-                            <select asp-for="Disponivel" class="field-input">
-                                <option value="true">✅ Disponível</option>
-                                <option value="false">❌ Indisponível</option>
-                            </select>
-                        </div>
                     </div>
                     <div class="form-section">
                         <div class="form-section-title">Capa</div>
@@ -84,7 +81,108 @@
                     <a href="/Livro/Details/@Model.Id" class="btn-cancel">← Cancelar</a>
                 </div>
             </div>
+
+            <!-- PAINEL DE EXEMPLARES -->
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="fch-icon" style="background:#ede9fe">📦</div>
+                    <div>
+                        <div class="fch-title">Exemplares</div>
+                        <div class="fch-sub">@disponiveis disponível/eis · @(total - disponiveis) emprestado(s) · @total no total</div>
+                    </div>
+                </div>
+
+                @if (Model.Exemplares.Any())
+                {
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tombo</th>
+                                    <th>Situação</th>
+                                    <th>Status</th>
+                                    <th>Leitor Atual</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ex in Model.Exemplares.OrderBy(e => e.Tombo))
+                                {
+                                    var empAtivo = ex.Emprestimos.FirstOrDefault(e => e.Status == "Ativo" || e.Status == "Atrasado");
+                                    <tr>
+                                        <td>
+                                            <code style="background:#f3f4f6;padding:2px 8px;border-radius:4px;font-size:0.85rem">@ex.Tombo</code>
+                                        </td>
+                                        <td>
+                                            @if (ex.Situacao == "Bom estado")
+                                            { <span class="badge badge-success">@ex.Situacao</span> }
+                                            else if (ex.Situacao == "Danificado")
+                                            { <span class="badge badge-warning">@ex.Situacao</span> }
+                                            else
+                                            { <span class="badge badge-danger">@ex.Situacao</span> }
+                                        </td>
+                                        <td>
+                                            @if (ex.Disponivel)
+                                            { <span class="badge badge-success">✓ Disponível</span> }
+                                            else
+                                            { <span class="badge badge-danger">✗ Emprestado</span> }
+                                        </td>
+                                        <td style="font-size:0.85rem">
+                                            @if (empAtivo != null)
+                                            { <a href="/Leitor/Details/@empAtivo.LeitorId" style="color:#2563a8">@empAtivo.Leitor?.Nome</a> }
+                                            else
+                                            { <span style="color:#9ca3af">—</span> }
+                                        </td>
+                                        <td>
+                                            @if (ex.Disponivel)
+                                            {
+                                                <form method="post" action="/Livro/AtualizarExemplar" style="display:inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="exemplarId" value="@ex.Id" />
+                                                    <select name="situacao" class="field-input" style="width:auto;padding:4px 10px;font-size:0.8rem;display:inline-block" onchange="this.form.submit()">
+                                                        <option value="Bom estado" selected="@(ex.Situacao=="Bom estado"?"selected":null)">Bom estado</option>
+                                                        <option value="Danificado" selected="@(ex.Situacao=="Danificado"?"selected":null)">Danificado</option>
+                                                        <option value="Perdido" selected="@(ex.Situacao=="Perdido"?"selected":null)">Perdido</option>
+                                                    </select>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <a href="/Emprestimo/Devolver/@empAtivo?.Id" class="btn btn-sm btn-success">↩ Devolver</a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-card-body">
+                        <div class="info-box warning">
+                            <span class="ib-icon">⚠️</span>
+                            <span>Este livro ainda não possui exemplares cadastrados.</span>
+                        </div>
+                    </div>
+                }
+
+                <!-- Adicionar exemplares -->
+                <div style="padding:14px 20px; border-top:1px solid #f0f0f0; background:#f9fafb; display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                    <form method="post" action="/Livro/AdicionarExemplar" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="livroId" value="@Model.Id" />
+                        <label style="font-size:0.82rem; color:#6b7280; white-space:nowrap">➕ Adicionar exemplares:</label>
+                        <input type="number" name="quantidade" value="1" min="1" max="10"
+                               style="width:65px; padding:6px 10px; border:1.5px solid #e5e7eb; border-radius:7px; font-size:0.85rem; outline:none" />
+                        <button type="submit" class="btn btn-sm btn-primary">Adicionar</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
+
+        <!-- SIDEBAR -->
         <div class="form-sidebar">
             <div class="sidebar-card">
                 <div class="sidebar-card-header">📋 Registro</div>
@@ -94,10 +192,18 @@
                         <span class="info-text">ID: <strong>#@Model.Id</strong></span>
                     </div>
                     <div class="info-item">
-                        <span class="info-icon">@(Model.Disponivel ? "✅" : "❌")</span>
-                        <span class="info-text">Status: <strong>@(Model.Disponivel ? "Disponível" : "Emprestado")</strong></span>
+                        <span class="info-icon">📦</span>
+                        <span class="info-text">Total de exemplares: <strong>@total</strong></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">✅</span>
+                        <span class="info-text">Disponíveis: <strong>@disponiveis</strong></span>
                     </div>
                 </div>
+            </div>
+            <div class="info-box info" style="margin-top:0">
+                <span class="ib-icon">💡</span>
+                <span>O <strong>tombo</strong> é o código físico colado na lombada do livro para identificar cada cópia na estante.</span>
             </div>
         </div>
     </div>
