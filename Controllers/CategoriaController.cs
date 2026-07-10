@@ -17,7 +17,7 @@ namespace Biblioteca.Controllers
         public IActionResult Index()
         {
             var categorias = _context.Categorias
-                .Include(c => c.Livros)
+                .Include(c => c.Livros).ThenInclude(l => l.Exemplares)
                 .OrderBy(c => c.Nome)
                 .ToList();
             return View(categorias);
@@ -26,7 +26,7 @@ namespace Biblioteca.Controllers
         public IActionResult Details(int id)
         {
             var categoria = _context.Categorias
-                .Include(c => c.Livros)
+                .Include(c => c.Livros).ThenInclude(l => l.Exemplares)
                 .FirstOrDefault(c => c.Id == id);
             if (categoria == null) return NotFound();
             return View(categoria);
@@ -84,7 +84,7 @@ namespace Biblioteca.Controllers
         public IActionResult Delete(int id)
         {
             var categoria = _context.Categorias
-                .Include(c => c.Livros)
+                .Include(c => c.Livros).ThenInclude(l => l.Exemplares)
                 .FirstOrDefault(c => c.Id == id);
             if (categoria == null) return NotFound();
             return View(categoria);

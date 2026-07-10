@@ -18,8 +18,9 @@ namespace Biblioteca.Controllers
             var hoje = DateTime.Now.Date;
 
             ViewBag.TotalLivros = _context.Livros.Count();
-            ViewBag.LivrosDisponiveis = _context.Livros.Count(l => l.Disponivel);
-            ViewBag.LivrosEmprestados = _context.Livros.Count(l => !l.Disponivel);
+            ViewBag.TotalExemplares = _context.Exemplares.Count();
+            ViewBag.LivrosDisponiveis = _context.Exemplares.Count(e => e.Disponivel);
+            ViewBag.LivrosEmprestados = _context.Exemplares.Count(e => !e.Disponivel);
             ViewBag.TotalCategorias = _context.Categorias.Count();
             ViewBag.TotalUsuarios = _context.Usuarios.Count();
             ViewBag.TotalLeitores = _context.Leitores.Count(l => l.Ativo);

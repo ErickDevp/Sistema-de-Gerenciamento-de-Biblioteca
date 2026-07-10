@@ -50,10 +50,11 @@
                                         <td>@livro.Autor</td>
                                         <td>@livro.AnoPublicacao</td>
                                         <td>
-                                            @if (livro.Disponivel)
-                                            { <span class="badge badge-success">Sim</span> }
+                                            @{ var dC = livro.Exemplares.Count(e => e.Disponivel); }
+                                            @if (dC > 0)
+                                            { <span class="badge badge-success">@dC disp.</span> }
                                             else
-                                            { <span class="badge badge-danger">Não</span> }
+                                            { <span class="badge badge-danger">0 disp.</span> }
                                         </td>
                                     </tr>
                                 }
@@ -94,11 +95,11 @@
                 </div>
                 <div class="info-item">
                     <span class="info-icon">✅</span>
-                    <span class="info-text">Disponíveis: <strong>@Model.Livros.Count(l => l.Disponivel)</strong></span>
+                    <span class="info-text">Disponíveis: <strong>@Model.Livros.Sum(l => l.Exemplares.Count(e => e.Disponivel))</strong></span>
                 </div>
                 <div class="info-item">
                     <span class="info-icon">📤</span>
-                    <span class="info-text">Emprestados: <strong>@Model.Livros.Count(l => !l.Disponivel)</strong></span>
+                    <span class="info-text">Emprestados: <strong>@Model.Livros.Sum(l => l.Exemplares.Count(e => !e.Disponivel))</strong></span>
                 </div>
             </div>
         </div>

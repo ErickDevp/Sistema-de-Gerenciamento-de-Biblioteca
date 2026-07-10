@@ -65,6 +65,19 @@
                             <span asp-validation-for="Role" class="field-error"></span>
                         </div>
                     </div>
+                    <div class="form-section">
+                        <div class="form-section-title">Foto de Perfil</div>
+                        <div class="field">
+                            <label asp-for="FotoUrl" class="field-label">URL da Foto <span class="field-hint">(opcional)</span></label>
+                            <input asp-for="FotoUrl" class="field-input" placeholder="https://..." id="fotoInput" oninput="previewFoto(this.value)" />
+                            <span asp-validation-for="FotoUrl" class="field-error"></span>
+                            <div class="field-desc">A foto aparecerá no canto superior direito ao logar.</div>
+                        </div>
+                        <div id="fotoPreview" style="display:none; margin-top:10px; display:flex; align-items:center; gap:12px">
+                            <img id="fotoImg" src="" alt="Preview" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid #e5e7eb;box-shadow:0 2px 8px rgba(0,0,0,0.1)" onerror="document.getElementById('fotoPreview').style.display='none'" />
+                            <span style="font-size:0.82rem;color:#6b7280">Pré-visualização da foto</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="form-footer">
                     <button type="submit" class="btn-submit">💾 Cadastrar Usuário</button>
@@ -94,6 +107,19 @@
     </div>
 </form>
 
+<script>
+function previewFoto(url) {
+    const preview = document.getElementById('fotoPreview');
+    const img = document.getElementById('fotoImg');
+    if (url && url.startsWith('http')) {
+        img.src = url;
+        preview.style.display = 'flex';
+        img.onerror = () => { preview.style.display = 'none'; };
+    } else {
+        preview.style.display = 'none';
+    }
+}
+</script>
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

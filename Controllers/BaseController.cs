@@ -20,6 +20,7 @@ namespace Biblioteca.Controllers
 
                 ViewBag.UsuarioNome = session.GetString("UsuarioNome");
                 ViewBag.UsuarioRole = session.GetString("UsuarioRole");
+                ViewBag.UsuarioFoto = session.GetString("UsuarioFoto");
 
                 base.OnActionExecuting(context);
             }

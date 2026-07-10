@@ -21,7 +21,16 @@
     <div>
         <div class="detail-card">
             <div class="detail-hero">
-                <div class="hero-icon">👤</div>
+                @if (!string.IsNullOrEmpty(Model.FotoUrl))
+                {
+                    <img src="@Model.FotoUrl" alt="@Model.Nome"
+                         style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.3);flex-shrink:0"
+                         onerror="this.style.display='none'" />
+                }
+                else
+                {
+                    <div class="hero-icon">👤</div>
+                }
                 <div>
                     <div class="hero-title">@Model.Nome</div>
                     <div class="hero-sub">@Model.Email</div>

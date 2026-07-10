@@ -95,8 +95,22 @@ namespace Biblioteca.Controllers
             existente.Nome = usuario.Nome;
             existente.Email = usuario.Email;
             existente.Role = usuario.Role;
+            existente.FotoUrl = usuario.FotoUrl;
 
             _usuarioService.Atualizar(existente, NovaSenha);
+
+            // Se o usuário editou o próprio perfil, atualiza a sessão imediatamente
+            var sessaoId = HttpContext.Session.GetInt32("UsuarioId");
+            if (sessaoId == id)
+            {
+                HttpContext.Session.SetString("UsuarioNome", existente.Nome);
+                HttpContext.Session.SetString("UsuarioRole", existente.Role);
+                if (!string.IsNullOrEmpty(existente.FotoUrl))
+                    HttpContext.Session.SetString("UsuarioFoto", existente.FotoUrl);
+                else
+                    HttpContext.Session.Remove("UsuarioFoto");
+            }
+
             TempData["Sucesso"] = "Usuário atualizado com sucesso!";
             return RedirectToAction(nameof(Index));
         }

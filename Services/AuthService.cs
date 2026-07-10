@@ -31,6 +31,10 @@ namespace Biblioteca.Services
                 session.SetString("UsuarioNome", usuario.Nome);
                 session.SetString("UsuarioEmail", usuario.Email);
                 session.SetString("UsuarioRole", usuario.Role);
+                if (!string.IsNullOrEmpty(usuario.FotoUrl))
+                    session.SetString("UsuarioFoto", usuario.FotoUrl);
+                else
+                    session.Remove("UsuarioFoto");
             }
         }
 

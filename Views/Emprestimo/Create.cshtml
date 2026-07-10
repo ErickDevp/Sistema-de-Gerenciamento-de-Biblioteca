@@ -58,9 +58,12 @@
                         <div class="field">
                             <label asp-for="DataPrevistaDevolucao" class="field-label">Data Prevista de Devolução <span class="req">*</span></label>
                             <input asp-for="DataPrevistaDevolucao" class="field-input" type="date"
-                                   min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")"
+                                   id="dataDevInput"
                                    value="@Model.DataPrevistaDevolucao.ToString("yyyy-MM-dd")" />
                             <span asp-validation-for="DataPrevistaDevolucao" class="field-error"></span>
+                            <span id="dataDevErro" class="field-error" style="display:none">
+                                ⚠ A data de devolução deve ser posterior à data de hoje.
+                            </span>
                             <div class="field-desc">Padrão: 14 dias a partir de hoje.</div>
                         </div>
                     </div>
@@ -88,6 +91,32 @@
         </div>
     </div>
 </form>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    var input = document.getElementById('dataDevInput');
+    var erro = document.getElementById('dataDevErro');
+    var hoje = new Date();
+    hoje.setHours(0,0,0,0);
+    var data = new Date(input.value);
+    if (!input.value || data <= hoje) {
+        e.preventDefault();
+        input.style.borderColor = '#ef4444';
+        input.style.background = '#fff5f5';
+        erro.style.display = 'flex';
+        input.focus();
+    } else {
+        input.style.borderColor = '';
+        input.style.background = '';
+        erro.style.display = 'none';
+    }
+});
+document.getElementById('dataDevInput').addEventListener('input', function() {
+    this.style.borderColor = '';
+    this.style.background = '';
+    document.getElementById('dataDevErro').style.display = 'none';
+});
+</script>
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }

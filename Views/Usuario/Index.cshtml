@@ -44,9 +44,21 @@
                                 <td style="color:#9ca3af">@u.Id</td>
                                 <td>
                                     <div style="display:flex; align-items:center; gap:10px">
-                                        <div style="width:32px; height:32px; border-radius:50%; background:#1a3a5c; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700; flex-shrink:0">
-                                            @u.Nome.Substring(0, 1).ToUpper()
-                                        </div>
+                                        @if (!string.IsNullOrEmpty(u.FotoUrl))
+                                        {
+                                            <img src="@u.FotoUrl" alt="@u.Nome"
+                                                 style="width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid #e5e7eb;flex-shrink:0"
+                                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                                            <div style="width:34px;height:34px;border-radius:50%;background:#1a3a5c;color:#fff;display:none;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0">
+                                                @u.Nome.Substring(0, 1).ToUpper()
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div style="width:34px;height:34px;border-radius:50%;background:#1a3a5c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;flex-shrink:0">
+                                                @u.Nome.Substring(0, 1).ToUpper()
+                                            </div>
+                                        }
                                         <strong>@u.Nome</strong>
                                     </div>
                                 </td>
