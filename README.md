@@ -198,16 +198,6 @@ Acesse: **http://localhost:5000**
 
 ---
 
-## 🔑 Credenciais Padrão
-
-| Usuário | E-mail | Senha | Cargo |
-|---|---|---|---|
-| Fabrício Gregório | fabricio@biblioteca.com | senha123 | Administrador |
-| Erick Santana | erick@biblioteca.com | senha123 | Administrador |
-| Funcionário Padrão | funcionario@biblioteca.com | Func@123 | Funcionário |
-
----
-
 ## 👥 Controle de Acesso
 
 | Funcionalidade | Administrador | Funcionário |
