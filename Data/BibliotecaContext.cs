@@ -11,6 +11,7 @@ namespace Biblioteca.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
         public DbSet<Livro> Livros { get; set; }
+        public DbSet<Exemplar> Exemplares { get; set; }
         public DbSet<Emprestimo> Emprestimos { get; set; }
         public DbSet<Leitor> Leitores { get; set; }
 
@@ -26,6 +27,7 @@ namespace Biblioteca.Data
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
                 entity.Property(e => e.SenhaHash).IsRequired();
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.FotoUrl).HasMaxLength(500);
             });
 
             modelBuilder.Entity<Categoria>(entity =>
@@ -39,13 +41,26 @@ namespace Biblioteca.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Titulo).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.Autor).IsRequired().HasMaxLength(150);
-                entity.Property(e => e.Disponivel).HasDefaultValue(true);
                 entity.Property(e => e.ImagemUrl).HasMaxLength(500);
 
                 entity.HasOne(e => e.Categoria)
                       .WithMany(c => c.Livros)
                       .HasForeignKey(e => e.CategoriaId)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Exemplar>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasIndex(e => e.Tombo).IsUnique();
+                entity.Property(e => e.Tombo).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Situacao).HasMaxLength(30);
+                entity.Property(e => e.Disponivel).HasDefaultValue(true);
+
+                entity.HasOne(e => e.Livro)
+                      .WithMany(l => l.Exemplares)
+                      .HasForeignKey(e => e.LivroId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Leitor>(entity =>
@@ -67,8 +82,13 @@ namespace Biblioteca.Data
                 entity.Property(e => e.Status).IsRequired().HasMaxLength(20);
 
                 entity.HasOne(e => e.Livro)
-                      .WithMany(l => l.Emprestimos)
+                      .WithMany()
                       .HasForeignKey(e => e.LivroId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(e => e.Exemplar)
+                      .WithMany(ex => ex.Emprestimos)
+                      .HasForeignKey(e => e.ExemplarId)
                       .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.Leitor)

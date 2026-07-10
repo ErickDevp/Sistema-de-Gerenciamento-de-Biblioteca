@@ -23,5 +23,9 @@ namespace Biblioteca.Models
         [Required(ErrorMessage = "O cargo é obrigatório.")]
         [Display(Name = "Cargo")]
         public string Role { get; set; } = "Funcionario";
+
+        [StringLength(500)]
+        [Display(Name = "Foto de Perfil (URL)")]
+        public string? FotoUrl { get; set; }
     }
 }

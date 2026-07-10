@@ -30,6 +30,10 @@ namespace Biblioteca.ViewModels
         [Display(Name = "Disponível")]
         public bool Disponivel { get; set; } = true;
 
+        [Range(1, 99, ErrorMessage = "Informe entre 1 e 99 exemplares.")]
+        [Display(Name = "Quantidade de Exemplares")]
+        public int QuantidadeExemplares { get; set; } = 1;
+
         public IEnumerable<SelectListItem>? Categorias { get; set; }
 
         // Filtros

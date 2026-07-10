@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Biblioteca</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
@@ -66,9 +67,21 @@
             <span class="topbar-title">@ViewData["Title"]</span>
 
             <div class="topbar-user">
-                <div class="user-avatar">
-                    @(ViewBag.UsuarioNome?.ToString()?.Substring(0, 1)?.ToUpper() ?? "U")
-                </div>
+                @if (!string.IsNullOrEmpty((string?)ViewBag.UsuarioFoto))
+                {
+                    <img src="@ViewBag.UsuarioFoto" alt="Foto"
+                         style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid #e5e7eb"
+                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                    <div class="user-avatar" style="display:none">
+                        @(ViewBag.UsuarioNome?.ToString()?.Substring(0, 1)?.ToUpper() ?? "U")
+                    </div>
+                }
+                else
+                {
+                    <div class="user-avatar">
+                        @(ViewBag.UsuarioNome?.ToString()?.Substring(0, 1)?.ToUpper() ?? "U")
+                    </div>
+                }
                 <div class="user-info">
                     <strong>@ViewBag.UsuarioNome</strong>
                     <span>@ViewBag.UsuarioRole</span>

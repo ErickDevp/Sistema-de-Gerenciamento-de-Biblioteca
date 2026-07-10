@@ -60,6 +60,14 @@
                         </div>
                     </div>
                     <div class="form-section">
+                        <div class="form-section-title">Exemplares</div>
+                        <div class="field">
+                            <label class="field-label">Quantidade de Exemplares <span class="req">*</span></label>
+                            <input type="number" name="QuantidadeExemplares" class="field-input" value="1" min="1" max="99" />
+                            <div class="field-desc">O sistema criará os exemplares automaticamente com tombos gerados (ex: DOM-001, DOM-002).</div>
+                        </div>
+                    </div>
+                    <div class="form-section">
                         <div class="form-section-title">Capa</div>
                         <div class="field">
                             <label asp-for="ImagemUrl" class="field-label">URL da Capa <span class="field-hint">(opcional)</span></label>
